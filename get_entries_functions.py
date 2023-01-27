@@ -25,3 +25,9 @@ def get_entries(url) -> dict:
     url = f'{url}?pageStart=0&pageSize=100'
     json_response = get_json_response(url)
     return json_response['Entries']
+
+
+def save_entries_to_text_file(entries, filename):
+    with open(filename, 'w') as text_file:
+        for entry in entries:
+            print(entry, '\n', file=text_file)
