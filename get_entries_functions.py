@@ -30,4 +30,4 @@ def get_entries(url) -> dict:
 def save_entries_to_text_file(entries, filename):
     with open(filename, 'w') as text_file:
         for entry in entries:
-            print(entry, '\n', file=text_file)
+            print(entry, end='\n\n', file=text_file)
