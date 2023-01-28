@@ -21,7 +21,7 @@ def get_json_response(url):
         sys.exit(-1)
 
 
-def get_entries(url) -> dict:
+def get_entries(url) -> list[dict]:
     url = f'{url}?pageStart=0&pageSize=100'
     json_response = get_json_response(url)
     return json_response['Entries']
