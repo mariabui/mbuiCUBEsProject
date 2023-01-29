@@ -12,8 +12,7 @@ def get_response(url):
     return response
 
 
-def get_json_response(url):
-    response = get_response(url)
+def convert_response_to_json(response):
     try:
         return response.json()
     except requests.exceptions.JSONDecodeError as json_decode_error:
@@ -23,7 +22,8 @@ def get_json_response(url):
 
 def get_entries(url) -> list[dict]:
     url = f'{url}?pageStart=0&pageSize=100'
-    json_response = get_json_response(url)
+    response = get_response(url)
+    json_response = convert_response_to_json(response)
     return json_response['Entries']
 
 
