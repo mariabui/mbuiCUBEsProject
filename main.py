@@ -1,4 +1,4 @@
-from get_entries_functions import get_entries, save_entries_to_text_file
+from api_data import get_entries, save_entries_to_text_file
 
 
 def main():
