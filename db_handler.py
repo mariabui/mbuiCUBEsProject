@@ -71,29 +71,29 @@ def set_up_db(db_name: str) -> tuple[sqlite3.Connection, sqlite3.Cursor]:
 def convert_entries_to_list_of_tuples(entries: list[dict]) -> list[tuple]:
     entries_list_of_tuples = []
     for entry in entries:
-        entry_data = (entry.get('EntryId'),
-                      entry['Field1'] if entry['Field1'] != '' else None,
+        entry_data = (entry['EntryId'],
+                      None if entry['Field1'] == '' else entry['Field1'],
                       entry['Field2'],
                       entry['Field3'],
                       entry['Field4'],
                       entry['Field5'],
                       entry['Field6'],
-                      entry['Field7'] if entry['Field7'] != '' else None,
-                      entry['Field8'] if entry['Field8'] != '' else None,
-                      'Yes' if entry['Field9'] != '' else 'No',
-                      'Yes' if entry['Field10'] != '' else 'No',
-                      'Yes' if entry['Field11'] != '' else 'No',
-                      'Yes' if entry['Field12'] != '' else 'No',
-                      'Yes' if entry['Field13'] != '' else 'No',
-                      'Yes' if entry['Field14'] != '' else 'No',
-                      'Yes' if entry['Field15'] != '' else 'No',
-                      'Yes' if entry['Field109'] != '' else 'No',
-                      'Yes' if entry['Field110'] != '' else 'No',
-                      'Yes' if entry['Field111'] != '' else 'No',
-                      'Yes' if entry['Field112'] != '' else 'No',
-                      'Yes' if entry['Field113'] != '' else 'No',
-                      entry.get('Field210'),
-                      entry.get('DateCreated'))
+                      None if entry['Field7'] == '' else entry['Field7'],
+                      None if entry['Field8'] == '' else entry['Field8'],
+                      'No' if entry['Field9'] == '' else 'Yes',
+                      'No' if entry['Field10'] == '' else 'Yes',
+                      'No' if entry['Field11'] == '' else 'Yes',
+                      'No' if entry['Field12'] == '' else 'Yes',
+                      'No' if entry['Field13'] == '' else 'Yes',
+                      'No' if entry['Field14'] == '' else 'Yes',
+                      'No' if entry['Field15'] == '' else 'Yes',
+                      'No' if entry['Field109'] == '' else 'Yes',
+                      'No' if entry['Field110'] == '' else 'Yes',
+                      'No' if entry['Field111'] == '' else 'Yes',
+                      'No' if entry['Field112'] == '' else 'Yes',
+                      'No' if entry['Field113'] == '' else 'Yes',
+                      entry['Field210'],
+                      entry['DateCreated'])
         entries_list_of_tuples.append(entry_data)
     return entries_list_of_tuples
 
@@ -101,7 +101,7 @@ def convert_entries_to_list_of_tuples(entries: list[dict]) -> list[tuple]:
 def save_entries_to_db(entries: list[dict], cursor: sqlite3.Cursor):
     entries_list_of_tuples = convert_entries_to_list_of_tuples(entries)
     try:
-        cursor.executemany('INSERT INTO entries VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)',
+        cursor.executemany('''INSERT INTO entries VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)''',
                            entries_list_of_tuples)
     except sqlite3.Error as error:
         print(f'Failed to save entries to database, {error}')
