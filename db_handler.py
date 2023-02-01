@@ -101,7 +101,8 @@ def convert_entries_to_list_of_tuples(entries: list[dict]) -> list[tuple]:
 def save_entries_to_db(entries: list[dict], cursor: sqlite3.Cursor):
     entries_list_of_tuples = convert_entries_to_list_of_tuples(entries)
     try:
-        cursor.executemany('''INSERT INTO entries VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)''',
+        cursor.executemany('''INSERT INTO entries VALUES(
+        ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)''',
                            entries_list_of_tuples)
     except sqlite3.Error as error:
         print(f'Failed to save entries to database, {error}')
