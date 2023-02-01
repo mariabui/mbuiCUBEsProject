@@ -30,4 +30,6 @@ def get_entries(url: str) -> list[dict]:
 def save_entries_to_text_file(entries: list[dict], filename: str):
     with open(filename, 'w') as text_file:
         for entry in entries:
-            print(entry, end='\n\n', file=text_file)
+            for key, value in entry.items():
+                print(f'{key}: {value}', file=text_file)
+            print(file=text_file)
