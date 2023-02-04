@@ -55,7 +55,7 @@ def create_entries_table(cursor: sqlite3.Cursor):
 
 def clear_entries_table(cursor: sqlite3.Cursor):
     try:
-        cursor.execute('''DELETE FROM entries''')
+        cursor.execute('''DELETE FROM entries;''')
     except sqlite3.Error as error:
         print(f'Failed to clear entries table, {error}')
         sys.exit(-1)
@@ -85,7 +85,7 @@ def save_entries_to_db(entries: list[dict], cursor: sqlite3.Cursor):
     entries_values = process_entries_values(entries)
     try:
         cursor.executemany('''INSERT INTO entries VALUES(
-        ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)''', entries_values)
+        ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);''', entries_values)
     except sqlite3.Error as error:
         print(f'Failed to save entries to database, {error}')
         sys.exit(-1)
