@@ -27,7 +27,9 @@ def test_create_entries_table_and_save_entries_to_db():
     assert table_name == 'entries'
     save_entries_to_db(test_entry, cursor)
     cursor.execute('''SELECT * FROM entries;''')
-    entry = cursor.fetchone()
-    assert entry == (15, None, 'Chip', 'Skylark', 'Singer', 'Nickelodeon', 'cskylark@nick.com', None, None,
-                     'No', 'Yes', 'Yes', 'Yes', 'No', 'No', 'No', 'No', 'No', 'Yes', 'Yes', 'No', 'Yes', '2023-02-02 17:41:30')
+    saved_entries = cursor.fetchall()
+    assert saved_entries == [
+        (15, None, 'Chip', 'Skylark', 'Singer', 'Nickelodeon', 'cskylark@nick.com', None, None, 'No', 'Yes', 'Yes',
+         'Yes', 'No', 'No', 'No', 'No', 'No', 'Yes', 'Yes', 'No', 'Yes', '2023-02-02 17:41:30')
+    ]
     close_db(connection, cursor)
