@@ -47,7 +47,8 @@ def create_entries_table(cursor: sqlite3.Cursor):
                        summer_2023 TEXT,
                        other TEXT,
                        organization_name_usage TEXT,
-                       date_created TEXT);''')
+                       date_created TEXT,
+                       created_by TEXT);''')
     except sqlite3.Error as error:
         print(f'Failed to create entries table, {error}')
         sys.exit(-1)
@@ -71,7 +72,7 @@ def set_up_db(filename: str) -> tuple[sqlite3.Connection, sqlite3.Cursor]:
 def process_entries_values(entries: list[dict]) -> list[tuple]:
     entries_values = []
     for entry in entries:
-        entry_values = list(entry.values())[:23]
+        entry_values = list(entry.values())[:24]
         entry_values[0] = int(entry_values[0])
         for field in [1, 7, 8]:
             entry_values[field] = None if entry_values[field] == '' else entry_values[field]
@@ -85,7 +86,7 @@ def save_entries_to_db(entries: list[dict], cursor: sqlite3.Cursor):
     entries_values = process_entries_values(entries)
     try:
         cursor.executemany('''INSERT INTO entries VALUES(
-        ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);''', entries_values)
+        ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);''', entries_values)
     except sqlite3.Error as error:
         print(f'Failed to save entries to database, {error}')
         sys.exit(-1)
