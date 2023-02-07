@@ -2,12 +2,12 @@ from api_data import get_entries
 from db_handler import set_up_db, open_db, save_entries_to_db, close_db
 
 
-def test_get_entries():
+def test_get_data_from_internet():
     entries = get_entries('https://mbui.wufoo.com/api/v3/forms/cubes-project-proposal-submission/entries/json')
     assert len(entries) > 10  # the right number of data items retrieved should be more than 10
 
 
-def test_set_up_db_and_save_entries_to_db():
+def test_data_goes_into_db():
     test_entry = [
         {'EntryId': '15', 'Field1': '', 'Field2': 'Chip', 'Field3': 'Skylark', 'Field4': 'Singer',
          'Field5': 'Nickelodeon', 'Field6': 'cskylark@nick.com', 'Field7': '', 'Field8': '', 'Field9': '',
