@@ -4,6 +4,7 @@ from db_handler import set_up_db, close_db, save_entries_to_db
 
 def main():
     url = 'https://mbui.wufoo.com/api/v3/forms/cubes-project-proposal-submission/entries/json'
+    # comment to test workflow
     entries = get_entries(url)
 
     filename = 'cubes_project_proposal_submissions.txt'
