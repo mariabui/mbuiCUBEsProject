@@ -19,7 +19,7 @@ def test_create_entries_table_and_save_entries_to_db():
     connection, cursor = open_db('test.sqlite')
     create_entries_table(cursor)
     clear_entries_table(cursor)
-    cursor.execute('''SELECT COUNT(*) FROM sqlite_master WHERE name = 'entries';''')
+    cursor.execute('''SELECT COUNT(*) FROM sqlite_master;''')
     table_count = cursor.fetchone()[0]
     assert table_count == 1
     cursor.execute('''SELECT name FROM sqlite_master WHERE type = 'table';''')
@@ -30,6 +30,6 @@ def test_create_entries_table_and_save_entries_to_db():
     saved_entries = cursor.fetchall()
     assert saved_entries == [
         (15, None, 'Chip', 'Skylark', 'Singer', 'Nickelodeon', 'cskylark@nick.com', None, None, 'No', 'Yes', 'Yes',
-         'Yes', 'No', 'No', 'No', 'No', 'No', 'Yes', 'Yes', 'No', 'Yes', '2023-02-02 17:41:30')
+         'Yes', 'No', 'No', 'No', 'No', 'No', 'Yes', 'Yes', 'No', 'Yes', '2023-02-02 17:41:30', 'public')
     ]
     close_db(connection, cursor)
