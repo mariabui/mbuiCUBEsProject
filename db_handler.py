@@ -45,7 +45,7 @@ def create_entries_table(cursor: sqlite3.Cursor):
                        fall_2022 TEXT,
                        spring_2023 TEXT,
                        summer_2023 TEXT,
-                       other TEXT,
+                       other_time_period TEXT,
                        organization_name_usage TEXT,
                        date_created TEXT,
                        created_by TEXT);''')
