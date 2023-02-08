@@ -7,10 +7,10 @@ def main():
     # comment to test workflow
     entries = get_entries(url)
 
-    filename = 'cubes_project_proposal_submissions.txt'
+    filename = 'cubes_project_proposal_entries.txt'
     save_entries_to_text_file(entries, filename)
 
-    connection, cursor = set_up_db('cubes_project_proposal_submissions.sqlite')
+    connection, cursor = set_up_db('cubes_project_proposal_db.sqlite')
     save_entries_to_db(entries, cursor)
     close_db(connection, cursor)
 
