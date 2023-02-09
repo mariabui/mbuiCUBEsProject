@@ -77,7 +77,7 @@ def process_entries_data(entries: list[dict]) -> list[tuple]:
         for field in [1, 7, 8]:
             entry_values[field] = None if entry_values[field] == '' else entry_values[field]
         for field in range(9, 21):
-            entry_values[field] = 'No' if entry_values[field] == '' else 'Yes'
+            entry_values[field] = 'N' if entry_values[field] == '' else 'Y'
         entries_data.append(tuple(entry_values))
     return entries_data
 

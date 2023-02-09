@@ -2,21 +2,21 @@ from api_data import get_entries
 from db_handler import set_up_db, save_entries_to_db, close_db, open_db
 
 
-def test_get_data_from_internet():
+def test_get_data():
     entries = get_entries('https://mbui.wufoo.com/api/v3/forms/cubes-project-proposal-submission/entries/json')
     assert len(entries) > 10  # the right number of data items retrieved is more than 10
 
 
 def test_data_goes_into_db():
     test_entry_data = [
-        (15, None, 'Chip', 'Skylark', 'Singer', 'Nickelodeon', 'cskylark@nick.com', None, None, 'No', 'Yes', 'Yes',
-         'Yes', 'No', 'No', 'No', 'No', 'No', 'Yes', 'Yes', 'No', 'Yes', '2023-02-02 17:41:30', 'public')
+        (15, None, 'Chip', 'Skylark', 'Singer', 'Nickelodeon', 'cskylark@nick.com', None, None, 'N', 'Y', 'Y', 'Y', 'N',
+         'N', 'N', 'N', 'N', 'Y', 'Y', 'N', 'Yes', '2023-02-02 17:41:30', 'public')
     ]
     connection, cursor = set_up_db('test_db.sqlite')  # creates a new empty db and runs entries table creation function
     save_entries_to_db(test_entry_data, cursor)
     close_db(connection, cursor)
-
     connection, cursor = open_db('test_db.sqlite')
+
     # verify that the entries table is created properly in the db
     cursor.execute('''SELECT COUNT(*) FROM sqlite_master;''')
     table_count = cursor.fetchone()[0]
@@ -37,10 +37,11 @@ def test_data_goes_into_db():
     cursor.execute('''SELECT * FROM entries;''')
     assert len(cursor.fetchall()) == 1
     cursor.execute('''SELECT * FROM entries WHERE entry_id = 15;''')
-    saved_entries = cursor.fetchall()
-    assert saved_entries[0] == test_entry_data[0]  # the test entry is saved to the db
+    saved_entry = cursor.fetchall()
+    assert saved_entry[0] == test_entry_data[0]  # the test entry is saved to the db
     cursor.execute('''SELECT COUNT(*) FROM entries WHERE entry_id = 15;''')
     assert cursor.fetchone()[0] == 1
     cursor.execute('''SELECT last_name FROM entries;''')
     assert cursor.fetchall()[0][0] == 'Skylark'
+
     close_db(connection, cursor)
