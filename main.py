@@ -1,5 +1,5 @@
 from api_data import get_entries, save_entries_to_text_file
-from db_handler import set_up_db, close_db, save_entries_to_db
+from db_handler import set_up_db, process_entries_data, save_entries_to_db, close_db
 
 
 def main():
@@ -11,7 +11,8 @@ def main():
     save_entries_to_text_file(entries, filename)
 
     connection, cursor = set_up_db('cubes_project_proposal_db.sqlite')
-    save_entries_to_db(entries, cursor)
+    entries_data = process_entries_data(entries)
+    save_entries_to_db(entries_data, cursor)
     close_db(connection, cursor)
 
 

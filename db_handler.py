@@ -69,8 +69,8 @@ def set_up_db(filename: str) -> tuple[sqlite3.Connection, sqlite3.Cursor]:
     return connection, cursor
 
 
-def process_entries_values(entries: list[dict]) -> list[tuple]:
-    entries_values = []
+def process_entries_data(entries: list[dict]) -> list[tuple]:
+    entries_data = []
     for entry in entries:
         entry_values = list(entry.values())[:24]
         entry_values[0] = int(entry_values[0])
@@ -78,15 +78,14 @@ def process_entries_values(entries: list[dict]) -> list[tuple]:
             entry_values[field] = None if entry_values[field] == '' else entry_values[field]
         for field in range(9, 21):
             entry_values[field] = 'No' if entry_values[field] == '' else 'Yes'
-        entries_values.append(tuple(entry_values))
-    return entries_values
+        entries_data.append(tuple(entry_values))
+    return entries_data
 
 
-def save_entries_to_db(entries: list[dict], cursor: sqlite3.Cursor):
-    entries_values = process_entries_values(entries)
+def save_entries_to_db(entries_data: list[tuple], cursor: sqlite3.Cursor):
     try:
         cursor.executemany('''INSERT INTO entries VALUES(
-        ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);''', entries_values)
+        ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);''', entries_data)
     except sqlite3.Error as error:
         print(f'Failed to save entries to database, {error}')
         sys.exit(-1)
