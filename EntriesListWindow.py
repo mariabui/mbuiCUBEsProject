@@ -27,7 +27,13 @@ class EntriesListWindow(QWidget):
     def put_entries_in_list(self, entries: list[dict]):
         for entry in entries:
             list_item_text = f"{entry['EntryId']}\t{entry['Field2']}\t{entry['Field3']}\t{entry['Field5']}"
-            list_item = QListWidgetItem(list_item_text, listview=self.list_window)
+            # list_item = QListWidgetItem(list_item_text, listview=self.list_window)
+            QListWidgetItem(list_item_text, listview=self.list_window)
+
+    def find_complete_entry(self, entry_id: str):
+        for entry in self.entries:
+            if entry['EntryId'] == entry_id:
+                return entry
 
     def list_item_selected(self, current: QListWidgetItem, previous: QListWidgetItem):
         selected_list_item = current.data(0)
@@ -36,8 +42,3 @@ class EntriesListWindow(QWidget):
         print(entry)
         self.data_window = EntryDataWindow(entry)
         self.data_window.show()
-
-    def find_complete_entry(self, entry_id: str):
-        for entry in self.entries:
-            if entry['EntryId'] == entry_id:
-                return entry
