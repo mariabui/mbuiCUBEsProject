@@ -46,8 +46,8 @@ class EntryDataWindow(QWidget):
         self.generate_checkbox(20, 'Other', 50, 630, 75, 630)
 
         self.generate_drop_box(21, 'If you participate in a CUBEs project, do we have your\n'
-                                           'permission to use your organizations name upon\n'
-                                           'completion, when listing completed projects?',
+                                   'permission to use your organizations name upon\n'
+                                   'completion, when listing completed projects?',
                                ['Yes', 'No', 'Further discussion is needed'], 50, 650, 40, 700)
 
     def generate_drop_box(self, field: int, label: str, items: list, label_x: int,
