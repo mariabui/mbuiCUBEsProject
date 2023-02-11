@@ -1,5 +1,5 @@
 from api_handler import get_entries, save_entries_to_text_file
-from db_handler import set_up_db, process_entries_data, save_entries_to_db, close_db
+from db_handler import set_up_db, process_entries_data, save_entries_to_db, close_db, open_db
 from gui_handler import display_entries_list
 
 
@@ -11,12 +11,16 @@ def main():
     filename = 'cubes_project_proposal_entries.txt'
     save_entries_to_text_file(entries, filename)
 
-    connection, cursor = set_up_db('cubes_project_proposal_db.sqlite')
+    db_name = 'cubes_project_proposal_db.sqlite'
+    connection, cursor = set_up_db(db_name)
     entries_data = process_entries_data(entries)
     save_entries_to_db(entries_data, cursor)
     close_db(connection, cursor)
 
-    display_entries_list(entries)
+    connection, cursor = open_db(db_name)
+    cursor.execute('''SELECT * FROM entries;''')
+    db_entries = cursor.fetchall()
+    display_entries_list(db_entries)
 
 
 if __name__ == '__main__':
