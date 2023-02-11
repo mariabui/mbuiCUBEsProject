@@ -89,3 +89,11 @@ def save_entries_to_db(entries_data: list[tuple], cursor: sqlite3.Cursor):
     except sqlite3.Error as error:
         print(f'Failed to save entries to database, {error}')
         sys.exit(-1)
+
+
+def get_entries_from_db(db_name: str) -> list[tuple]:
+    connection, cursor = open_db(db_name)
+    cursor.execute('''SELECT * FROM entries;''')
+    db_entries = cursor.fetchall()
+    close_db(connection, cursor)
+    return db_entries

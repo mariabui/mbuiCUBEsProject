@@ -1,5 +1,5 @@
 from api_handler import get_entries, save_entries_to_text_file
-from db_handler import set_up_db, process_entries_data, save_entries_to_db, close_db, open_db
+from db_handler import set_up_db, process_entries_data, save_entries_to_db, close_db, get_entries_from_db
 from gui_handler import display_entries_list
 
 
@@ -17,9 +17,7 @@ def main():
     save_entries_to_db(entries_data, cursor)
     close_db(connection, cursor)
 
-    connection, cursor = open_db(db_name)
-    cursor.execute('''SELECT * FROM entries;''')
-    db_entries = cursor.fetchall()
+    db_entries = get_entries_from_db(db_name)
     display_entries_list(db_entries)
 
 
