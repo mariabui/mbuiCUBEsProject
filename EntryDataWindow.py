@@ -9,32 +9,32 @@ class EntryDataWindow(QWidget):
 
     def setup(self):
         self.setWindowTitle(f'Entry {self.entry[0]}')
-        self.setGeometry(450, 0, 500, 900)
+        self.setGeometry(500, 0, 500, 900)
 
-        self.generate_drop_box(1, 'Prefix', ['', 'Mr.', 'Ms.', 'Dr.'], 50, 50, 40, 65)
+        self.generate_drop_down(1, 'Prefix', ['', 'Mr.', 'Ms.', 'Dr.'], 50, 10, 40, 25)
 
         name_label = QLabel(self)
         name_label.setText('Name *')
-        name_label.move(50, 90)
-        self.generate_field(2, 'First', 50, 130, 50, 110)
-        self.generate_field(3, 'Last', 190, 130, 190, 110)
-        self.generate_field(4, 'Title *', 50, 150, 50, 170, 300)
-        self.generate_field(5, 'Organization Name *', 50, 190, 50, 210, 300)
-        self.generate_field(6, 'Email *', 50, 230, 50, 250, 300)
-        self.generate_field(7, 'Organization Website', 50, 270, 50, 290, 300)
-        self.generate_field(8, 'Phone Number', 50, 310, 50, 330)
+        name_label.move(50, 60)
+        self.generate_field(2, 'First', 50, 95, 50, 75)
+        self.generate_field(3, 'Last', 180, 95, 180, 75)
+        self.generate_field(4, 'Title *', 50, 120, 50, 135, 300)
+        self.generate_field(5, 'Organization Name *', 50, 165, 50, 180, 300)
+        self.generate_field(6, 'Email *', 50, 210, 50, 225, 300)
+        self.generate_field(7, 'Organization Website', 50, 255, 50, 270, 300)
+        self.generate_field(8, 'Phone Number', 50, 300, 50, 315)
 
         collab_label = QLabel(self)
-        collab_label.setText('Which of the following collaborative opportunities\n'
-                             'would you be interested in? (check all that apply)')
-        collab_label.move(50, 350)
-        self.generate_checkbox(9, 'Course Project', 50, 390, 75, 390)
-        self.generate_checkbox(10, 'Guest Speaker', 50, 410, 75, 410)
-        self.generate_checkbox(11, 'Site Vist', 50, 430, 75, 430)
-        self.generate_checkbox(12, 'Job Shadow', 50, 450, 75, 450)
-        self.generate_checkbox(13, 'Internships', 50, 470, 75, 470)
-        self.generate_checkbox(14, 'Career Panel', 50, 490, 75, 490)
-        self.generate_checkbox(15, 'Networking Event', 50, 510, 75, 510)
+        collab_label.setText('Which of the following collaborative opportunities would\n'
+                             'you be interested in? (check all that apply)')
+        collab_label.move(50, 345)
+        self.generate_checkbox(9, 'Course Project', 50, 380, 75, 380)
+        self.generate_checkbox(10, 'Guest Speaker', 50, 400, 75, 400)
+        self.generate_checkbox(11, 'Site Vist', 50, 420, 75, 420)
+        self.generate_checkbox(12, 'Job Shadow', 50, 440, 75, 440)
+        self.generate_checkbox(13, 'Internships', 50, 460, 75, 460)
+        self.generate_checkbox(14, 'Career Panel', 50, 480, 75, 480)
+        self.generate_checkbox(15, 'Networking Event', 50, 500, 75, 500)
 
         collab_time_label = QLabel(self)
         collab_time_label.setText('Your proposed collaboration time period')
@@ -45,13 +45,13 @@ class EntryDataWindow(QWidget):
         self.generate_checkbox(19, 'Summer 2023 (June 2023- August 2023)', 50, 610, 75, 610)
         self.generate_checkbox(20, 'Other', 50, 630, 75, 630)
 
-        self.generate_drop_box(21, 'If you participate in a CUBEs project, do we have your\n'
-                                   'permission to use your organizations name upon\n'
-                                   'completion, when listing completed projects?',
-                               ['Yes', 'No', 'Further discussion is needed'], 50, 650, 40, 700)
+        self.generate_drop_down(21, 'If you participate in a CUBEs project, do we have your\n'
+                                    'permission to use your organizations name upon\n'
+                                    'completion, when listing completed projects?',
+                                ['Yes', 'No', 'Further discussion is needed'], 50, 660, 40, 710)
 
-    def generate_drop_box(self, field: int, label: str, items: list, label_x: int,
-                          label_y: int, drop_down_x: int, drop_down_y: int):
+    def generate_drop_down(self, field: int, label: str, items: list, label_x: int,
+                           label_y: int, drop_down_x: int, drop_down_y: int):
         q_label = QLabel(self)
         q_label.setText(label)
         q_label.move(label_x, label_y)

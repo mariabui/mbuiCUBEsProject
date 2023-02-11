@@ -12,16 +12,16 @@ class EntriesListWindow(QWidget):
 
     def setup(self):
         self.setWindowTitle('CUBES Project Proposal Entries')
-        self.setGeometry(0, 0, 450, 500)
+        self.setGeometry(0, 0, 500, 500)
         list_window = QListWidget(self)
         self.list_window = list_window
-        list_window.resize(450, 460)
+        list_window.resize(500, 470)
         self.put_entries_in_list(self.db_entries)
         list_window.currentItemChanged.connect(self.list_item_selected)
         quit_button = QPushButton('Quit', self)
         quit_button.clicked.connect(QApplication.instance().quit)
         quit_button.resize(quit_button.sizeHint())
-        quit_button.move(380, 470)
+        quit_button.move(440, 470)
         self.show()
 
     def put_entries_in_list(self, db_entries: list[tuple]):
