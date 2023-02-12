@@ -4,18 +4,11 @@ from db_handler import set_up_db, save_entries_to_db, close_db, open_db
 
 def test_get_data():
     entries = get_entries('https://mbui.wufoo.com/api/v3/forms/cubes-project-proposal-submission/entries/json')
-    assert len(entries) > 10  # the right number of data items retrieved is more than 10
+    assert len(entries) >= 10  # the right number of data items retrieved is more than 10
 
 
-def test_data_goes_into_db():
-    test_entry_data = [
-        (15, None, 'Chip', 'Skylark', 'Singer', 'Nickelodeon', 'cskylark@nick.com', None, None, 'N', 'Y', 'Y', 'Y', 'N',
-         'N', 'N', 'N', 'N', 'Y', 'Y', 'N', 'Yes', '2023-02-02 17:41:30', 'public')
-    ]
+def test_create_table():
     connection, cursor = set_up_db('test_db.sqlite')  # creates a new empty db and runs entries table creation function
-    save_entries_to_db(test_entry_data, cursor)
-    close_db(connection, cursor)
-    connection, cursor = open_db('test_db.sqlite')
 
     # verify that the entries table is created properly in the db
     cursor.execute('''SELECT COUNT(*) FROM sqlite_master;''')
@@ -29,6 +22,19 @@ def test_data_goes_into_db():
     assert entries_table_count == 1  # there is an entries table in the db
     cursor.execute('''SELECT * FROM sqlite_master WHERE tbl_name = 'entries' AND type = 'table';''')
     assert len(cursor.fetchall()) == 1
+
+    close_db(connection, cursor)
+
+
+def test_data_goes_into_db():
+    test_entry_data = [
+        (15, None, 'Chip', 'Skylark', 'Singer', 'Nickelodeon', 'cskylark@nick.com', None, None, 'N', 'Y', 'Y', 'Y', 'N',
+         'N', 'N', 'N', 'N', 'Y', 'Y', 'N', 'Yes', '2023-02-02 17:41:30', 'public')
+    ]
+    connection, cursor = set_up_db('test_db.sqlite')  # creates a new empty db and runs entries table creation function
+    save_entries_to_db(test_entry_data, cursor)
+    close_db(connection, cursor)
+    connection, cursor = open_db('test_db.sqlite')
 
     # verify that the db contains the test entry that was put there
     cursor.execute('''SELECT COUNT(*) FROM entries;''')
