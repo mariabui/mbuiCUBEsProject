@@ -27,8 +27,8 @@ def get_entries(url: str) -> list[dict]:
     return json_response['Entries']
 
 
-def save_entries_to_text_file(entries: list[dict], filename: str):
-    with open(filename, 'w') as text_file:
+def save_entries_to_text_file(entries: list[dict], txt_filename: str):
+    with open(txt_filename, 'w') as text_file:
         for entry in entries:
             for key, value in entry.items():
                 print(f'{key}: {value}', file=text_file)

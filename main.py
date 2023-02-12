@@ -8,16 +8,16 @@ def main():
     # comment to test workflow
     entries = get_entries(url)
 
-    filename = 'cubes_project_proposal_entries.txt'
-    save_entries_to_text_file(entries, filename)
+    txt_filename = 'cubes_entries.txt'
+    save_entries_to_text_file(entries, txt_filename)
 
-    db_name = 'cubes_project_proposal_db.sqlite'
-    connection, cursor = set_up_db(db_name)
+    db_filename = 'cubes_db.sqlite'
+    connection, cursor = set_up_db(db_filename)
     entries_data = process_entries_data(entries)
     save_entries_to_db(entries_data, cursor)
     close_db(connection, cursor)
 
-    db_entries = get_entries_from_db(db_name)
+    db_entries = get_entries_from_db(db_filename)
     display_entries_list(db_entries)
 
 

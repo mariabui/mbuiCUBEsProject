@@ -2,9 +2,9 @@ import sys
 import sqlite3
 
 
-def open_db(filename: str) -> tuple[sqlite3.Connection, sqlite3.Cursor]:
+def open_db(db_filename: str) -> tuple[sqlite3.Connection, sqlite3.Cursor]:
     try:
-        connection = sqlite3.connect(filename)
+        connection = sqlite3.connect(db_filename)
         cursor = connection.cursor()
         return connection, cursor
     except sqlite3.Error as error:
@@ -91,8 +91,8 @@ def save_entries_to_db(entries_data: list[tuple], cursor: sqlite3.Cursor):
         sys.exit(-1)
 
 
-def get_entries_from_db(db_name: str) -> list[tuple]:
-    connection, cursor = open_db(db_name)
+def get_entries_from_db(db_filename: str) -> list[tuple]:
+    connection, cursor = open_db(db_filename)
     cursor.execute('''SELECT * FROM entries;''')
     db_entries = cursor.fetchall()
     close_db(connection, cursor)

@@ -6,18 +6,18 @@ class EntriesListWindow(QWidget):
     def __init__(self, db_entries):
         super().__init__()
         self.db_entries = db_entries
-        self.list_window = None
+        self.list_view = None
         self.data_window = None
         self.setup()
 
     def setup(self):
         self.setWindowTitle('CUBES Project Proposal Entries')
         self.setGeometry(0, 0, 500, 500)
-        list_window = QListWidget(self)
-        self.list_window = list_window
-        list_window.resize(500, 470)
+        list_view = QListWidget(self)
+        self.list_view = list_view
+        list_view.resize(500, 470)
         self.put_entries_in_list(self.db_entries)
-        list_window.currentItemChanged.connect(self.list_item_selected)
+        list_view.currentItemChanged.connect(self.list_item_selected)
         quit_button = QPushButton('Quit', self)
         quit_button.clicked.connect(QApplication.instance().quit)
         quit_button.resize(quit_button.sizeHint())
@@ -28,7 +28,7 @@ class EntriesListWindow(QWidget):
         for db_entry in db_entries:
             list_item_text = f'{db_entry[0]}\t{db_entry[2]}\t{db_entry[3]}\t{db_entry[5]}'
             # list_item = QListWidgetItem(list_item_text, listview=self.list_window)
-            QListWidgetItem(list_item_text, listview=self.list_window)
+            QListWidgetItem(list_item_text, listview=self.list_view)
 
     def find_complete_entry(self, db_entry_id: str):
         for db_entry in self.db_entries:
