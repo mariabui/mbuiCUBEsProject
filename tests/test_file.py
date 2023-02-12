@@ -26,7 +26,7 @@ def test_create_table():
     close_db(connection, cursor)
 
 
-def test_data_goes_into_db():
+def test_save_data_to_db():
     test_entry_data = [
         (15, None, 'Chip', 'Skylark', 'Singer', 'Nickelodeon', 'cskylark@nick.com', None, None, 'N', 'Y', 'Y', 'Y', 'N',
          'N', 'N', 'N', 'N', 'Y', 'Y', 'N', 'Yes', '2023-02-02 17:41:30', 'public')
