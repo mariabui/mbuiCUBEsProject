@@ -31,7 +31,7 @@ def test_save_data_to_db():
         (15, None, 'Chip', 'Skylark', 'Singer', 'Nickelodeon', 'cskylark@nick.com', None, None, 'N', 'Y', 'Y', 'Y', 'N',
          'N', 'N', 'N', 'N', 'Y', 'Y', 'N', 'Yes', '2023-02-02 17:41:30', 'public')
     ]
-    connection, cursor = set_up_db('test_db.sqlite')  # creates a new empty db and runs entries table creation function
+    connection, cursor = open_db('test_db.sqlite')
     save_entries_to_db(test_entry_data, cursor)
     close_db(connection, cursor)
     connection, cursor = open_db('test_db.sqlite')
