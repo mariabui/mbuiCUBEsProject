@@ -27,7 +27,6 @@ class EntriesListWindow(QWidget):
     def put_entries_in_list(self, db_entries: list[tuple]):
         for db_entry in db_entries:
             list_item_text = f'{db_entry[0]}\t{db_entry[2]}\t{db_entry[3]}\t{db_entry[5]}'
-            # list_item = QListWidgetItem(list_item_text, listview=self.list_window)
             QListWidgetItem(list_item_text, listview=self.list_view)
 
     def find_complete_entry(self, db_entry_id: str):
@@ -42,3 +41,4 @@ class EntriesListWindow(QWidget):
         print(db_entry)
         self.data_window = EntryDataWindow(db_entry)
         self.data_window.show()
+        return self.data_window
