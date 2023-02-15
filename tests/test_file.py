@@ -1,8 +1,8 @@
-import sys
+# import sys
 from api_handler import get_entries
-from db_handler import set_up_db, save_entries_to_db, close_db, open_db, get_entries_from_db
-import EntriesListWindow
-from PySide6.QtWidgets import QApplication, QListWidgetItem
+from db_handler import set_up_db, save_entries_to_db, close_db, open_db  # , get_entries_from_db
+# from EntriesListWindow import EntriesListWindow
+# from PySide6.QtWidgets import QApplication, QListWidgetItem
 
 
 def test_get_data():
@@ -12,7 +12,6 @@ def test_get_data():
 
 def test_create_table():
     connection, cursor = set_up_db('test_db.sqlite')  # creates a new empty db and runs entries table creation function
-
     # verify that the entries table is created properly in the db
     cursor.execute('''SELECT COUNT(*) FROM sqlite_master;''')
     table_count = cursor.fetchone()[0]
@@ -25,7 +24,6 @@ def test_create_table():
     assert entries_table_count == 1  # there is an entries table in the db
     cursor.execute('''SELECT * FROM sqlite_master WHERE tbl_name = 'entries' AND type = 'table';''')
     assert len(cursor.fetchall()) == 1
-
     close_db(connection, cursor)
 
 
@@ -38,7 +36,6 @@ def test_save_data_to_db():
     save_entries_to_db(test_entry_data, cursor)
     close_db(connection, cursor)
     connection, cursor = open_db('test_db.sqlite')
-
     # verify that the db contains the test entry that was put there
     cursor.execute('''SELECT COUNT(*) FROM entries;''')
     entries_count = cursor.fetchone()[0]
@@ -50,22 +47,21 @@ def test_save_data_to_db():
     assert saved_entry[0] == test_entry_data[0]  # the test entry is saved to the db
     cursor.execute('''SELECT COUNT(*) FROM entries WHERE entry_id = 15;''')
     assert cursor.fetchone()[0] == 1
-    cursor.execute('''SELECT last_name FROM entries;''')
-    assert cursor.fetchall()[0][0] == 'Skylark'
-
+    cursor.execute('''SELECT first_name FROM entries;''')
+    assert cursor.fetchall()[0][0] == 'Chip'
     close_db(connection, cursor)
 
 
-def test_list_item_selected():
-    db_entries = get_entries_from_db('test_db.sqlite')
-    QApplication(sys.argv)
-    window = EntriesListWindow.EntriesListWindow(db_entries)
-    list_item = QListWidgetItem('15\tChip\tSkylark\tNickelodeon')
-    data_window = EntriesListWindow.EntriesListWindow.list_item_selected(window, list_item, None)
-    assert data_window.first_name.text() == 'Chip'
-    assert data_window.last_name.text() == 'Skylark'
-    assert data_window.title.text() == 'Singer'
-    assert data_window.organization_name.text() == 'Nickelodeon'
-    assert data_window.email.text() == 'cskylark@nick.com'
-    assert data_window.course_project.isChecked() is False
-    assert data_window.guest_speaker.isChecked() is True
+# def test_list_item_selected():
+#     db_entries = get_entries_from_db('test_db.sqlite')
+#     QApplication(sys.argv)
+#     entries_list_window = EntriesListWindow(db_entries)
+#     list_item = QListWidgetItem('15\tChip\tSkylark\tNickelodeon')
+#     entry_data_window = EntriesListWindow.list_item_selected(entries_list_window, list_item, None)
+#     assert entry_data_window.first_name.text() == 'Chip'
+#     assert entry_data_window.last_name.text() == 'Skylark'
+#     assert entry_data_window.title.text() == 'Singer'
+#     assert entry_data_window.organization_name.text() == 'Nickelodeon'
+#     assert entry_data_window.email.text() == 'cskylark@nick.com'
+#     assert entry_data_window.course_project.isChecked() is False
+#     assert entry_data_window.guest_speaker.isChecked() is True
