@@ -2,7 +2,7 @@ from PySide6.QtWidgets import QWidget, QLabel, QLineEdit, QCheckBox
 
 
 class EntryDataWindow(QWidget):
-    def __init__(self, db_entry: dict):
+    def __init__(self, db_entry: tuple):
         super().__init__()
         self.db_entry = db_entry
         self.prefix = None
@@ -48,7 +48,6 @@ class EntryDataWindow(QWidget):
                               'you be interested in? (check all that apply)', self)
         collab_label.move(50, 345)
         self.course_project = self.generate_checkbox(9, 'Course Project', 50, 380)
-        print(self.course_project.isChecked())
         self.guest_speaker = self.generate_checkbox(10, 'Guest Speaker', 50, 400)
         self.site_visit = self.generate_checkbox(11, 'Site Vist', 50, 420)
         self.job_shadow = self.generate_checkbox(12, 'Job Shadow', 50, 440)
