@@ -4,7 +4,7 @@ from EntriesListWindow import EntriesListWindow
 
 
 def display_entries_list(db_entries: list[tuple]):
-    app = QApplication(sys.argv)
-    window = EntriesListWindow(db_entries)
-    window.show()
-    sys.exit(app.exec_())
+    q_app = QApplication(sys.argv)
+    entries_list_window = EntriesListWindow(db_entries)
+    entries_list_window.show()
+    sys.exit(q_app.exec())

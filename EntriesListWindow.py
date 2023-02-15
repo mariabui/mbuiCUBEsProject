@@ -7,7 +7,7 @@ class EntriesListWindow(QWidget):
         super().__init__()
         self.db_entries = db_entries
         self.list_view = None
-        self.data_window = None
+        self.entry_data_window = None
         self.setup()
 
     def setup(self):
@@ -39,6 +39,6 @@ class EntriesListWindow(QWidget):
         db_entry_id = selected_list_item.split('\t')[0]
         db_entry = self.find_complete_entry(db_entry_id)
         print(db_entry)
-        self.data_window = EntryDataWindow(db_entry)
-        self.data_window.show()
-        return self.data_window
+        self.entry_data_window = EntryDataWindow(db_entry)
+        self.entry_data_window.show()
+        return self.entry_data_window

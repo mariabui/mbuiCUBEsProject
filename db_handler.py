@@ -62,8 +62,8 @@ def clear_entries_table(cursor: sqlite3.Cursor):
         sys.exit(-1)
 
 
-def set_up_db(filename: str) -> tuple[sqlite3.Connection, sqlite3.Cursor]:
-    connection, cursor = open_db(filename)
+def set_up_db(db_filename: str) -> tuple[sqlite3.Connection, sqlite3.Cursor]:
+    connection, cursor = open_db(db_filename)
     create_entries_table(cursor)
     clear_entries_table(cursor)
     return connection, cursor
