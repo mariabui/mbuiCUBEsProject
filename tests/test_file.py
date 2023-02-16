@@ -1,7 +1,16 @@
+import pytest
 from api_handler import get_entries
-from db_handler import set_up_db, save_entries_to_db, close_db, open_db  # , get_entries_from_db
-# from EntriesListWindow import EntriesListWindow
-# from PySide6.QtWidgets import QListWidgetItem
+from db_handler import set_up_db, save_entries_to_db, close_db, open_db, get_entries_from_db
+from EntriesListWindow import EntriesListWindow
+from PySide6.QtWidgets import QListWidgetItem
+
+
+@pytest.fixture
+def app(qtbot):
+    db_entries = get_entries_from_db('test_db.sqlite')
+    entries_list_window = EntriesListWindow(db_entries)
+    qtbot.addWidget(entries_list_window)
+    return entries_list_window
 
 
 def test_get_data():
@@ -51,17 +60,17 @@ def test_save_data_to_db():
     close_db(connection, cursor)
 
 
-# def test_list_item_selected(qtbot):
-#     db_entries = get_entries_from_db('test_db.sqlite')
-#     # QApplication(sys.argv)
-#     entries_list_window = EntriesListWindow(db_entries)
-#     qtbot.addWidget(entries_list_window)
-#     list_item = QListWidgetItem('15\tChip\tSkylark\tNickelodeon', listview=entries_list_window.list_view)
-#     EntriesListWindow.list_item_selected(entries_list_window, list_item, None)
-#     assert entries_list_window.entry_data_window.first_name.text() == 'Chip'
-#     assert entries_list_window.entry_data_window.last_name.text() == 'Skylark'
-#     assert entries_list_window.entry_data_window.title.text() == 'Singer'
-#     assert entries_list_window.entry_data_window.organization_name.text() == 'Nickelodeon'
-#     assert entries_list_window.entry_data_window.email.text() == 'cskylark@nick.com'
-#     assert entries_list_window.entry_data_window.course_project.isChecked() is False
-#     assert entries_list_window.entry_data_window.guest_speaker.isChecked() is True
+def test_list_item_selected(app, qtbot):
+    # db_entries = get_entries_from_db('test_db.sqlite')
+    # QApplication(sys.argv)
+    # entries_list_window = EntriesListWindow(db_entries)
+    # qtbot.addWidget(entries_list_window)
+    list_item = QListWidgetItem('15\tChip\tSkylark\tNickelodeon', listview=app.list_view)
+    EntriesListWindow.list_item_selected(app, list_item, None)
+    assert app.entry_data_window.first_name.text() == 'Chip'
+    assert app.entry_data_window.last_name.text() == 'Skylark'
+    assert app.entry_data_window.title.text() == 'Singer'
+    assert app.entry_data_window.organization_name.text() == 'Nickelodeon'
+    assert app.entry_data_window.email.text() == 'cskylark@nick.com'
+    assert app.entry_data_window.course_project.isChecked() is False
+    assert app.entry_data_window.guest_speaker.isChecked() is True
