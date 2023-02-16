@@ -1,7 +1,7 @@
 # import sys
 from api_handler import get_entries
-from db_handler import set_up_db, save_entries_to_db, close_db, open_db  # , get_entries_from_db
-# from EntriesListWindow import EntriesListWindow
+from db_handler import set_up_db, save_entries_to_db, close_db, open_db, get_entries_from_db
+from EntriesListWindow import EntriesListWindow
 # from PySide6.QtWidgets import QApplication, QListWidgetItem
 
 
@@ -52,16 +52,17 @@ def test_save_data_to_db():
     close_db(connection, cursor)
 
 
-# def test_list_item_selected():
-#     db_entries = get_entries_from_db('test_db.sqlite')
-#     QApplication(sys.argv)
-#     entries_list_window = EntriesListWindow(db_entries)
-#     list_item = QListWidgetItem('15\tChip\tSkylark\tNickelodeon')
-#     entry_data_window = EntriesListWindow.list_item_selected(entries_list_window, list_item, None)
-#     assert entry_data_window.first_name.text() == 'Chip'
-#     assert entry_data_window.last_name.text() == 'Skylark'
-#     assert entry_data_window.title.text() == 'Singer'
-#     assert entry_data_window.organization_name.text() == 'Nickelodeon'
-#     assert entry_data_window.email.text() == 'cskylark@nick.com'
-#     assert entry_data_window.course_project.isChecked() is False
-#     assert entry_data_window.guest_speaker.isChecked() is True
+def test_list_item_selected(qtbot):
+    db_entries = get_entries_from_db('test_db.sqlite')
+    # QApplication(sys.argv)
+    entries_list_window = EntriesListWindow(db_entries)
+    # qtbot.addWidget(entries_list_window)
+    # list_item = QListWidgetItem('15\tChip\tSkylark\tNickelodeon')
+    # EntriesListWindow.list_item_selected(entries_list_window, list_item, None)
+    assert entries_list_window.entry_data_window.first_name.text() == 'Chip'
+    assert entries_list_window.entry_data_window.last_name.text() == 'Skylark'
+    assert entries_list_window.entry_data_window.title.text() == 'Singer'
+    assert entries_list_window.entry_data_window.organization_name.text() == 'Nickelodeon'
+    assert entries_list_window.entry_data_window.email.text() == 'cskylark@nick.com'
+    assert entries_list_window.entry_data_window.course_project.isChecked() is False
+    assert entries_list_window.entry_data_window.guest_speaker.isChecked() is True
