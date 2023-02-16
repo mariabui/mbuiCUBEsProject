@@ -41,4 +41,3 @@ class EntriesListWindow(QWidget):
         print(db_entry)
         self.entry_data_window = EntryDataWindow(db_entry)
         self.entry_data_window.show()
-        return self.entry_data_window
