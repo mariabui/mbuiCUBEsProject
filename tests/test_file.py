@@ -1,8 +1,8 @@
-# import sys
+import sys
 from api_handler import get_entries
 from db_handler import set_up_db, save_entries_to_db, close_db, open_db, get_entries_from_db
 from EntriesListWindow import EntriesListWindow
-# from PySide6.QtWidgets import QApplication, QListWidgetItem
+from PySide6.QtWidgets import QApplication, QListWidgetItem
 
 
 def test_get_data():
@@ -52,13 +52,13 @@ def test_save_data_to_db():
     close_db(connection, cursor)
 
 
-def test_list_item_selected(qtbot):
+def test_list_item_selected():
     db_entries = get_entries_from_db('test_db.sqlite')
-    # QApplication(sys.argv)
+    QApplication(sys.argv)
     entries_list_window = EntriesListWindow(db_entries)
     # qtbot.addWidget(entries_list_window)
-    # list_item = QListWidgetItem('15\tChip\tSkylark\tNickelodeon')
-    # EntriesListWindow.list_item_selected(entries_list_window, list_item, None)
+    list_item = QListWidgetItem('15\tChip\tSkylark\tNickelodeon')
+    EntriesListWindow.list_item_selected(entries_list_window, list_item, None)
     assert entries_list_window.entry_data_window.first_name.text() == 'Chip'
     assert entries_list_window.entry_data_window.last_name.text() == 'Skylark'
     assert entries_list_window.entry_data_window.title.text() == 'Singer'
