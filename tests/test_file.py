@@ -1,7 +1,7 @@
 from api_handler import get_entries
 from db_handler import set_up_db, save_entries_to_db, close_db, open_db, get_entries_from_db
 from EntriesListWindow import EntriesListWindow
-from PySide6.QtWidgets import QListWidgetItem
+# from PySide6.QtWidgets import QListWidgetItem
 
 
 def test_get_data():
