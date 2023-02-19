@@ -26,7 +26,7 @@ jobs:
       with:
         python-version: "3.10"
     - uses: tlambert03/setup-qt-libs@v1
-    - name: build "display"
+    - name: Build display
       run: |
         /sbin/start-stop-daemon --start --quiet --pidfile /tmp/custom_xvfb_99.pid --make-pidfile --background --exec /usr/bin/Xvfb -- :99 -screen 0 1920x1200x24 -ac +extension GLX
     - name: Build Secrets
@@ -36,7 +36,7 @@ jobs:
         echo 'wufoo_key = "'$API_KEY'"' >> secrets.py
     - name: Install dependencies
       run: |
-        sudo apt install libegl1
+#        sudo apt install libegl1
         python -m pip install --upgrade pip
         pip install flake8 pytest
         if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
