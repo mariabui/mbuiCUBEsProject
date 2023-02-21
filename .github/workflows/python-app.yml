@@ -25,15 +25,15 @@ jobs:
       uses: actions/setup-python@v3
       with:
         python-version: "3.10"
-    - uses: tlambert03/setup-qt-libs@v1
-    - name: Build display
-      run: |
-        /sbin/start-stop-daemon --start --quiet --pidfile /tmp/custom_xvfb_99.pid --make-pidfile --background --exec /usr/bin/Xvfb -- :99 -screen 0 1920x1200x24 -ac +extension GLX
     - name: Build Secrets
       env:
         API_KEY: ${{ secrets.WUFOO_KEY }}
       run: |
         echo 'wufoo_key = "'$API_KEY'"' >> secrets.py
+    - uses: tlambert03/setup-qt-libs@v1
+    - name: Build display
+      run: |
+        /sbin/start-stop-daemon --start --quiet --pidfile /tmp/custom_xvfb_99.pid --make-pidfile --background --exec /usr/bin/Xvfb -- :99 -screen 0 1920x1200x24 -ac +extension GLX
     - name: Install dependencies
       run: |
         python -m pip install --upgrade pip
