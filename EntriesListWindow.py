@@ -29,7 +29,7 @@ class EntriesListWindow(QWidget):
             list_item_text = f'{db_entry[0]}\t{db_entry[2]}\t{db_entry[3]}\t{db_entry[5]}'
             QListWidgetItem(list_item_text, listview=self.list_view)
 
-    def find_complete_entry(self, db_entry_id: str):
+    def find_complete_entry_data(self, db_entry_id: str):
         for db_entry in self.db_entries:
             if db_entry[0] == int(db_entry_id):
                 return db_entry
@@ -37,7 +37,7 @@ class EntriesListWindow(QWidget):
     def list_item_selected(self, current: QListWidgetItem):
         selected_list_item = current.data(0)
         db_entry_id = selected_list_item.split('\t')[0]
-        db_entry = self.find_complete_entry(db_entry_id)
+        db_entry = self.find_complete_entry_data(db_entry_id)
         print(db_entry)
         self.entry_data_window = EntryDataWindow(db_entry)
         self.entry_data_window.show()

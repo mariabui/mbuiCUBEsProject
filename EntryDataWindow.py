@@ -67,7 +67,6 @@ class EntryDataWindow(QWidget):
                                                               'permission to use your organizations name upon\n'
                                                               'completion, when listing completed projects?',
                                                           50, 665, 50, 715, 250)
-
         self.show()
 
     def generate_line(self, field: int, label_text: str, label_x: int, label_y: int, line_x: int, line_y: int, width=None):

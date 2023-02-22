@@ -1,6 +1,6 @@
 from api_handler import get_entries, save_entries_to_text_file
 from db_handler import set_up_db, process_entries_data, save_entries_to_db, close_db, get_entries_from_db
-from gui_handler import display_entries_list
+from gui_handler import display_entries_in_gui
 
 
 def main():
@@ -18,7 +18,7 @@ def main():
     close_db(connection, cursor)
 
     db_entries = get_entries_from_db(db_filename)
-    display_entries_list(db_entries)
+    display_entries_in_gui(db_entries)
 
 
 if __name__ == '__main__':
