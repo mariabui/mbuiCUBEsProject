@@ -34,7 +34,7 @@ class EntriesListWindow(QWidget):
             if db_entry[0] == int(db_entry_id):
                 return db_entry
 
-    def list_item_selected(self, current: QListWidgetItem):
+    def list_item_selected(self, current: QListWidgetItem, previous: QListWidgetItem):
         selected_list_item = current.data(0)
         db_entry_id = selected_list_item.split('\t')[0]
         db_entry = self.find_complete_entry_data(db_entry_id)

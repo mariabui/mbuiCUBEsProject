@@ -58,7 +58,7 @@ def test_list_item_selected(qtbot):
     entries_list_window = EntriesListWindow(db_entries)
     qtbot.addWidget(entries_list_window)
     list_item = QListWidgetItem('15\tChip\tSkylark\tNickelodeon', listview=entries_list_window.list_view)
-    entries_list_window.list_item_selected(list_item)
+    entries_list_window.list_item_selected(list_item, list_item)
     assert entries_list_window.entry_data_window.first_name.text() == 'Chip'
     assert entries_list_window.entry_data_window.last_name.text() == 'Skylark'
     assert entries_list_window.entry_data_window.title.text() == 'Singer'
