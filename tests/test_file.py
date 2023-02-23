@@ -6,7 +6,7 @@ from PySide6.QtWidgets import QListWidgetItem
 
 def test_get_data():
     entries = get_entries('https://mbui.wufoo.com/api/v3/forms/cubes-project-proposal-submission/entries/json')
-    assert len(entries) >= 10  # the right number of data items retrieved is more than 10
+    assert len(entries) >= 10
 
 
 def test_create_table():
@@ -21,6 +21,8 @@ def test_create_table():
     cursor.execute('''SELECT COUNT(*) FROM sqlite_master WHERE name = 'entries';''')
     entries_table_count = cursor.fetchone()[0]
     assert entries_table_count == 1  # there is an entries table in the db
+    cursor.execute('''SELECT COUNT(*) FROM sqlite_master WHERE type = 'table' AND name = 'entries';''')
+    assert cursor.fetchone()[0] == 1
     cursor.execute('''SELECT * FROM sqlite_master WHERE tbl_name = 'entries' AND type = 'table';''')
     assert len(cursor.fetchall()) == 1
     close_db(connection, cursor)
@@ -56,7 +58,7 @@ def test_list_item_selected(qtbot):
     entries_list_window = EntriesListWindow(db_entries)
     qtbot.addWidget(entries_list_window)
     list_item = QListWidgetItem('15\tChip\tSkylark\tNickelodeon', listview=entries_list_window.list_view)
-    EntriesListWindow.list_item_selected(entries_list_window, list_item)
+    entries_list_window.list_item_selected(list_item)
     assert entries_list_window.entry_data_window.first_name.text() == 'Chip'
     assert entries_list_window.entry_data_window.last_name.text() == 'Skylark'
     assert entries_list_window.entry_data_window.title.text() == 'Singer'
@@ -64,3 +66,5 @@ def test_list_item_selected(qtbot):
     assert entries_list_window.entry_data_window.email.text() == 'cskylark@nick.com'
     assert entries_list_window.entry_data_window.course_project.isChecked() is False
     assert entries_list_window.entry_data_window.guest_speaker.isChecked() is True
+    assert entries_list_window.entry_data_window.summer_2022.isChecked() is False
+    assert entries_list_window.entry_data_window.spring_2023.isChecked() is True
