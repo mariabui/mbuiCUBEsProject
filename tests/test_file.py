@@ -1,5 +1,5 @@
 from api_handler import get_entries
-from db_handler import set_up_db, save_entries_to_db, close_db, open_db, get_entries_from_db
+from db_handler import set_up_db, save_entries_to_db, close_db, open_db, get_entries_from_db, create_entries_table
 from EntriesListWindow import EntriesListWindow
 from PySide6.QtWidgets import QListWidgetItem
 
@@ -10,7 +10,8 @@ def test_get_data():
 
 
 def test_create_table():
-    connection, cursor = set_up_db('test_db.sqlite')  # creates a new empty db and runs entries table creation function
+    connection, cursor = open_db('test_db.sqlite')  # creates a new empty db and runs entries table creation function
+    create_entries_table(cursor)
     # verify that the entries table is created properly in the db
     cursor.execute('''SELECT COUNT(*) FROM sqlite_master;''')
     table_count = cursor.fetchone()[0]
