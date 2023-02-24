@@ -62,10 +62,53 @@ def clear_entries_table(cursor: sqlite3.Cursor):
         sys.exit(-1)
 
 
+def create_faculties_table(cursor: sqlite3.Cursor):
+    try:
+        cursor.execute('''CREATE TABLE IF NOT EXISTS faculties(
+                       email TEXT PRIMARY KEY,
+                       first_name TEXT NOT NULL,
+                       last_name TEXT NOT NULL,
+                       title TEXT NOT NULL,
+                       department TEXT);''')
+    except sqlite3.Error as error:
+        print(f'Failed to create faculties table, {error}')
+        sys.exit(-1)
+
+
+def clear_faculties_table(cursor: sqlite3.Cursor):
+    try:
+        cursor.execute('''DELETE FROM faculties;''')
+    except sqlite3.Error as error:
+        print(f'Failed to clear faculties table, {error}')
+        sys.exit(-1)
+
+
+def create_claims_table(cursor: sqlite3.Cursor):
+    try:
+        cursor.execute('''CREATE TABLE IF NOT EXISTS claims(
+                       entry_id INTEGER,
+                       email TEXT,
+                       FOREIGN KEY (entry_id) REFERENCES entries (entry_id),
+                       FOREIGN KEY (email) REFERENCES faculties (email));''')
+    except sqlite3.Error as error:
+        print(f'Failed to create claims table, {error}')
+        sys.exit(-1)
+
+
+def clear_claims_table(cursor: sqlite3.Cursor):
+    try:
+        cursor.execute('''DELETE FROM claims;''')
+    except sqlite3.Error as error:
+        print(f'Failed to clear claims table, {error}')
+        sys.exit(-1)
+
+
 def set_up_db(db_filename: str) -> tuple[sqlite3.Connection, sqlite3.Cursor]:
     connection, cursor = open_db(db_filename)
     create_entries_table(cursor)
-    clear_entries_table(cursor)
+    create_faculties_table(cursor)
+    create_claims_table(cursor)
+    # clear_entries_table(cursor)
     return connection, cursor
 
 
