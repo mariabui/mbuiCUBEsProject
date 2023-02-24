@@ -1,13 +1,16 @@
 from PySide6.QtWidgets import QApplication, QWidget, QListWidget, QListWidgetItem, QPushButton
 from EntryDataWindow import EntryDataWindow
+from ClaimWindow import ClaimWindow
 
 
 class EntriesListWindow(QWidget):
     def __init__(self, db_entries):
         super().__init__()
         self.db_entries = db_entries
+        self.db_entry = None
         self.list_view = None
         self.entry_data_window = None
+        self.claim_window = None
         self.setup()
 
     def setup(self):
@@ -22,6 +25,10 @@ class EntriesListWindow(QWidget):
         quit_button.clicked.connect(QApplication.instance().quit)
         quit_button.resize(quit_button.sizeHint())
         quit_button.move(440, 470)
+        claim_button = QPushButton('Claim', self)
+        claim_button.clicked.connect(self.claim)
+        claim_button.resize(claim_button.sizeHint())
+        claim_button.move(220, 470)
         self.show()
 
     def put_entries_in_list(self, db_entries: list[tuple]):
@@ -37,7 +44,11 @@ class EntriesListWindow(QWidget):
     def list_item_selected(self, current: QListWidgetItem, previous: QListWidgetItem):
         selected_list_item = current.data(0)
         db_entry_id = selected_list_item.split('\t')[0]
-        db_entry = self.find_complete_entry_data(db_entry_id)
-        print(db_entry)
-        self.entry_data_window = EntryDataWindow(db_entry)
+        self.db_entry = self.find_complete_entry_data(db_entry_id)
+        print(self.db_entry)
+        self.entry_data_window = EntryDataWindow(self.db_entry)
         self.entry_data_window.show()
+
+    def claim(self):
+        self.claim_window = ClaimWindow(self.db_entry)
+        self.claim_window.show()
