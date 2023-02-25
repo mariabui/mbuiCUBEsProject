@@ -63,7 +63,7 @@ class ClaimWindow(QWidget):
         name_label = QLabel('Name *', self)
         name_label.move(50, 75)
         name_label.show()
-        self.submit_user_button = QPushButton('Submit', self)
+        self.submit_user_button = QPushButton('Claim', self)
         self.submit_user_button.clicked.connect(self.submit_user_and_claim)
         self.submit_user_button.resize(self.submit_user_button.sizeHint())
         self.submit_user_button.move(170, 265)

@@ -164,3 +164,11 @@ def save_claim_to_db(claim_data: tuple, cursor: sqlite3.Cursor):
     except sqlite3.Error as error:
         print(f'Failed to save claim to database, {error}')
         sys.exit(-1)
+
+
+def get_entry_from_db(db_filename: str, entry_id: str):
+    connection, cursor = open_db(db_filename)
+    cursor.execute('''SELECT * FROM claims WHERE entry_id = ?;''', [entry_id])
+    entry_record = cursor.fetchall()
+    close_db(connection, cursor)
+    return entry_record
