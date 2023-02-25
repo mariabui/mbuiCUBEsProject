@@ -6,6 +6,7 @@ class EntriesListWindow(QWidget):
     def __init__(self, db_entries):
         super().__init__()
         self.db_entries = db_entries
+        self.db_entry = None
         self.list_view = None
         self.entry_data_window = None
         self.setup()
@@ -37,7 +38,7 @@ class EntriesListWindow(QWidget):
     def list_item_selected(self, current: QListWidgetItem, previous: QListWidgetItem):
         selected_list_item = current.data(0)
         db_entry_id = selected_list_item.split('\t')[0]
-        db_entry = self.find_complete_entry_data(db_entry_id)
-        print(db_entry)
-        self.entry_data_window = EntryDataWindow(db_entry)
+        self.db_entry = self.find_complete_entry_data(db_entry_id)
+        print(self.db_entry)
+        self.entry_data_window = EntryDataWindow(self.db_entry)
         self.entry_data_window.show()
