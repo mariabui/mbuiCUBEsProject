@@ -69,7 +69,7 @@ def create_users_table(cursor: sqlite3.Cursor):
                        first_name TEXT NOT NULL,
                        last_name TEXT NOT NULL,
                        title TEXT NOT NULL,
-                       department TEXT);''')
+                       department TEXT NOT NULL);''')
     except sqlite3.Error as error:
         print(f'Failed to create users table, {error}')
         sys.exit(-1)
@@ -142,7 +142,7 @@ def get_entries_from_db(db_filename: str) -> list[tuple]:
     return db_entries
 
 
-def get_email_from_db(db_filename: str, email: str):
+def get_user_from_db(db_filename: str, email: str):
     connection, cursor = open_db(db_filename)
     cursor.execute('''SELECT * FROM users WHERE email = ?;''', [email])
     user_record = cursor.fetchall()
@@ -158,9 +158,9 @@ def save_user_to_db(user_data: tuple, cursor: sqlite3.Cursor):
         sys.exit(-1)
 
 
-def save_claim_to_db(claim: tuple, cursor: sqlite3.Cursor):
+def save_claim_to_db(claim_data: tuple, cursor: sqlite3.Cursor):
     try:
-        cursor.execute('''INSERT INTO claims VALUES(?, ?);''', claim)
+        cursor.execute('''INSERT INTO claims VALUES(?, ?);''', claim_data)
     except sqlite3.Error as error:
-        print(f'Failed to save user to database, {error}')
+        print(f'Failed to save claim to database, {error}')
         sys.exit(-1)
