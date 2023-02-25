@@ -30,7 +30,7 @@ class EntryDataWindow(QWidget):
 
     def setup(self):
         self.setWindowTitle(f'Entry {self.db_entry[0]}')
-        self.setGeometry(500, 0, 450, 900)
+        self.setGeometry(500, 0, 450, 800)
 
         self.prefix = self.generate_line(1, 'Prefix', 50, 30, 50, 45)
 
