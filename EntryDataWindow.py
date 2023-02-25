@@ -37,11 +37,11 @@ class EntryDataWindow(QWidget):
         name_label = QLabel('Name *', self)
         name_label.move(50, 75)
         self.first_name = self.generate_line(2, 'First', 50, 110, 50, 90)
-        self.last_name = self.generate_line(3, 'Last', 175, 110, 175, 90)
-        self.title = self.generate_line(4, 'Title *', 50, 135, 50, 150, 250)
-        self.organization_name = self.generate_line(5, 'Organization Name *', 50, 180, 50, 195, 250)
-        self.email = self.generate_line(6, 'Email *', 50, 225, 50, 240, 250)
-        self.organization_website = self.generate_line(7, 'Organization Website', 50, 270, 50, 285, 250)
+        self.last_name = self.generate_line(3, 'Last', 190, 110, 190, 90)
+        self.title = self.generate_line(4, 'Title *', 50, 135, 50, 150, 265)
+        self.organization_name = self.generate_line(5, 'Organization Name *', 50, 180, 50, 195, 265)
+        self.email = self.generate_line(6, 'Email *', 50, 225, 50, 240, 265)
+        self.organization_website = self.generate_line(7, 'Organization Website', 50, 270, 50, 285, 265)
         self.phone_number = self.generate_line(8, 'Phone Number', 50, 315, 50, 330)
 
         collab_label = QLabel('Which of the following collaborative opportunities would\n'
@@ -66,7 +66,7 @@ class EntryDataWindow(QWidget):
         self.organization_name_usage = self.generate_line(21, 'If you participate in a CUBEs project, do we have your\n'
                                                               'permission to use your organizations name upon\n'
                                                               'completion, when listing completed projects?',
-                                                          50, 665, 50, 715, 250)
+                                                          50, 665, 50, 715, 265)
         self.show()
 
     def generate_line(self, field: int, label_text: str, label_x: int, label_y: int, line_x: int, line_y: int, width=None):
