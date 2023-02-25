@@ -15,13 +15,13 @@ class EntriesListWindow(QWidget):
         self.setGeometry(0, 0, 500, 500)
         list_view = QListWidget(self)
         self.list_view = list_view
-        list_view.resize(500, 470)
+        list_view.resize(500, 455)
         self.put_entries_in_list(self.db_entries)
         list_view.currentItemChanged.connect(self.list_item_selected)
         quit_button = QPushButton('Quit', self)
         quit_button.clicked.connect(QApplication.instance().quit)
         quit_button.resize(quit_button.sizeHint())
-        quit_button.move(440, 470)
+        quit_button.move(410, 465)
         self.show()
 
     def put_entries_in_list(self, db_entries: list[tuple]):
