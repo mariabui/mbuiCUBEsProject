@@ -1,11 +1,13 @@
 from PySide6.QtWidgets import QWidget, QLabel, QLineEdit, QPushButton
+from PySide6.QtGui import QColor
 from db_handler import get_user_from_db, save_user_to_db, open_db, close_db, save_claim_to_db
 
 
 class ClaimWindow(QWidget):
-    def __init__(self, db_entry):
+    def __init__(self, db_entry, current):
         super().__init__()
         self.db_entry = db_entry
+        self.current = current
         self.email = None
         self.first_name = None
         self.last_name = None
@@ -90,6 +92,7 @@ class ClaimWindow(QWidget):
         close_db(connection, cursor)
         self.save_claim()
         print('saved claim to db')
+        self.current.setForeground(QColor('red'))
         self.first_name.setReadOnly(True)
         self.last_name.setReadOnly(True)
         self.title.setReadOnly(True)
@@ -99,5 +102,6 @@ class ClaimWindow(QWidget):
         connection, cursor = open_db('cubes_db.sqlite')
         save_claim_to_db(tuple([self.db_entry[0], self.email.text()]), cursor)
         close_db(connection, cursor)
+        self.current.setForeground(QColor('red'))
         self.email.setReadOnly(True)
         self.submit_user_button.setDisabled(True)

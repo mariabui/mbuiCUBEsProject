@@ -166,9 +166,9 @@ def save_claim_to_db(claim_data: tuple, cursor: sqlite3.Cursor):
         sys.exit(-1)
 
 
-def get_entry_from_db(db_filename: str, entry_id: str):
+def get_entry_claim_from_db(db_filename: str, entry: tuple):
     connection, cursor = open_db(db_filename)
-    cursor.execute('''SELECT * FROM claims WHERE entry_id = ?;''', [entry_id])
+    cursor.execute('''SELECT * FROM claims WHERE entry_id = ?;''', [entry[0]])
     entry_record = cursor.fetchall()
     close_db(connection, cursor)
     return entry_record

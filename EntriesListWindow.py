@@ -2,7 +2,8 @@ from PySide6.QtWidgets import QApplication, QWidget, QListWidget, QListWidgetIte
 from PySide6.QtGui import QColor
 from EntryDataWindow import EntryDataWindow
 from ClaimWindow import ClaimWindow
-from db_handler import get_entry_from_db
+from db_handler import get_entry_claim_from_db
+from UserDataWindow import UserDataWindow
 
 
 class EntriesListWindow(QWidget):
@@ -13,6 +14,9 @@ class EntriesListWindow(QWidget):
         self.list_view = None
         self.entry_data_window = None
         self.claim_window = None
+        self.user_data_window = None
+        self.selected_list_item = None
+        self.current = None
         # self.claim_button = None
         self.setup()
 
@@ -38,6 +42,7 @@ class EntriesListWindow(QWidget):
         for db_entry in db_entries:
             list_item_text = f'{db_entry[0]}\t{db_entry[2]}\t{db_entry[3]}\t{db_entry[5]}'
             list_item = QListWidgetItem(list_item_text, listview=self.list_view)
+            # print(list_item)
             # self.check_entry_claimed(db_entry)
             # print(db_entry)
             if self.check_entry_claimed(db_entry):
@@ -49,8 +54,10 @@ class EntriesListWindow(QWidget):
                 return db_entry
 
     def list_item_selected(self, current: QListWidgetItem, previous: QListWidgetItem):
-        selected_list_item = current.data(0)
-        db_entry_id = selected_list_item.split('\t')[0]
+        self.current = current
+        print(self.current)
+        self.selected_list_item = current.data(0)
+        db_entry_id = self.selected_list_item.split('\t')[0]
         self.db_entry = self.find_complete_entry_data(db_entry_id)
         print(self.db_entry)
         self.entry_data_window = EntryDataWindow(self.db_entry)
@@ -63,7 +70,7 @@ class EntriesListWindow(QWidget):
         # self.claim_window.show()
 
     def check_entry_claimed(self, db_entry: tuple):
-        entry_record = get_entry_from_db('cubes_db.sqlite', db_entry[0])
+        entry_record = get_entry_claim_from_db('cubes_db.sqlite', db_entry)
         if len(entry_record) == 0:
             print('entry not claimed')
             return False
@@ -72,11 +79,14 @@ class EntriesListWindow(QWidget):
             return True
 
     def show_or_hide_claim_window(self, db_entry: tuple):
-        self.claim_window = ClaimWindow(self.db_entry)
+        self.claim_window = ClaimWindow(self.db_entry, self.current)
+        self.user_data_window = UserDataWindow(self.db_entry)
         claimed = self.check_entry_claimed(db_entry)
         if claimed:
             self.claim_window.hide()
+            self.user_data_window.show()
             # self.claim_button.setDisabled(False)
         else:
             self.claim_window.show()
+            self.user_data_window.hide()
             # self.claim_button.setDisabled(True)
