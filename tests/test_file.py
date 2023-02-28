@@ -80,20 +80,16 @@ def test_user_creation(qtbot):
     db_entries = get_entries_from_db(db_filename)
     current = QListWidgetItem('15\tChip\tSkylark\tNickelodeon')
     claim_window = ClaimWindow(db_entries[0], current, db_filename)
+    qtbot.addWidget(claim_window)
     claim_window.email.setText('jsantore@bridgew.edu')
     claim_window.show_lines_or_fields()
     claim_window.first_name.setText('John')
     claim_window.last_name.setText('Santore')
     claim_window.title.setText('Professor')
     claim_window.department.setText('Computer Science')
-    assert claim_window.email.text() == 'jsantore@bridgew.edu'
-    assert claim_window.first_name.text() == 'John'
-    assert claim_window.last_name.text() == 'Santore'
-    assert claim_window.title.text() == 'Professor'
-    assert claim_window.department.text() == 'Computer Science'
     claim_window.claim()
     connection, cursor = open_db(db_filename)
-    cursor.execute("SELECT * FROM users WHERE email = 'jsantore@bridgew.edu'")
+    cursor.execute('''SELECT * FROM users WHERE email = 'jsantore@bridgew.edu';''')
     user_record = cursor.fetchone()
     assert user_record[0] == 'jsantore@bridgew.edu'
     assert user_record[1] == 'John'
@@ -103,7 +99,18 @@ def test_user_creation(qtbot):
 
 
 def test_user_data_population(qtbot):
-    pass
+    db_filename = 'test_db.sqlite'
+    db_entries = get_entries_from_db(db_filename)
+    current = QListWidgetItem('15\tChip\tSkylark\tNickelodeon')
+    claim_window = ClaimWindow(db_entries[0], current, db_filename)
+    qtbot.addWidget(claim_window)
+    claim_window.email.setText('jsantore@bridgew.edu')
+    claim_window.show_lines_or_fields()
+    assert claim_window.email.text() == 'jsantore@bridgew.edu'
+    assert claim_window.first_name.text() == 'John'
+    assert claim_window.last_name.text() == 'Santore'
+    assert claim_window.title.text() == 'Professor'
+    assert claim_window.department.text() == 'Computer Science'
 
 
 def test_():
