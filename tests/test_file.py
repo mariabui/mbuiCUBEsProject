@@ -10,24 +10,24 @@ def test_get_data():
     assert len(entries) >= 10
 
 
-# def test_create_table():
-#     connection, cursor = open_db('test_db.sqlite')  # creates a new empty db and runs entries table creation function
-#     create_entries_table(cursor)
-#     # verify that the entries table is created properly in the db
-#     cursor.execute('''SELECT COUNT(*) FROM sqlite_master;''')
-#     table_count = cursor.fetchone()[0]
-#     assert table_count == 1  # there is a table in the db
-#     cursor.execute('''SELECT name FROM sqlite_master WHERE type = 'table';''')
-#     table_name = cursor.fetchall()[0][0]
-#     assert table_name == 'entries'  # the table's name is 'entries'
-#     cursor.execute('''SELECT COUNT(*) FROM sqlite_master WHERE name = 'entries';''')
-#     entries_table_count = cursor.fetchone()[0]
-#     assert entries_table_count == 1  # there is an entries table in the db
-#     cursor.execute('''SELECT COUNT(*) FROM sqlite_master WHERE type = 'table' AND name = 'entries';''')
-#     assert cursor.fetchone()[0] == 1
-#     cursor.execute('''SELECT * FROM sqlite_master WHERE tbl_name = 'entries' AND type = 'table';''')
-#     assert len(cursor.fetchall()) == 1
-#     close_db(connection, cursor)
+def test_create_table():
+    connection, cursor = open_db('test_db.sqlite')  # creates a new empty db and runs entries table creation function
+    create_entries_table(cursor)
+    # verify that the entries table is created properly in the db
+    cursor.execute('''SELECT COUNT(*) FROM sqlite_master;''')
+    table_count = cursor.fetchone()[0]
+    assert table_count == 1  # there is a table in the db
+    cursor.execute('''SELECT name FROM sqlite_master WHERE type = 'table';''')
+    table_name = cursor.fetchall()[0][0]
+    assert table_name == 'entries'  # the table's name is 'entries'
+    cursor.execute('''SELECT COUNT(*) FROM sqlite_master WHERE name = 'entries';''')
+    entries_table_count = cursor.fetchone()[0]
+    assert entries_table_count == 1  # there is an entries table in the db
+    cursor.execute('''SELECT COUNT(*) FROM sqlite_master WHERE type = 'table' AND name = 'entries';''')
+    assert cursor.fetchone()[0] == 1
+    cursor.execute('''SELECT * FROM sqlite_master WHERE tbl_name = 'entries' AND type = 'table';''')
+    assert len(cursor.fetchall()) == 1
+    close_db(connection, cursor)
 
 
 def test_save_data_to_db():
