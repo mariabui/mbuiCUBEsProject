@@ -11,7 +11,7 @@ class EntriesListWindow(QWidget):
         super().__init__()
         self.db_entries = db_entries
         self.db_filename = db_filename
-        self.db_entry = None
+        # self.db_entry = None
         self.list_view = None
         self.current = None
         self.selected_list_item = None
@@ -39,25 +39,27 @@ class EntriesListWindow(QWidget):
         for db_entry in db_entries:
             list_item_text = f'{db_entry[0]}\t{db_entry[2]}\t{db_entry[3]}\t{db_entry[5]}'
             list_item = QListWidgetItem(list_item_text, listview=self.list_view)
-            if self.is_claimed(db_entry):
+            list_item.setData(1, db_entry)
+            if self.entry_is_claimed(db_entry):
                 list_item.setForeground(QColor('red'))
 
-    def find_complete_entry_data(self, db_entry_id: str):
-        for db_entry in self.db_entries:
-            if db_entry[0] == int(db_entry_id):
-                return db_entry
+    # def find_complete_entry_data(self, db_entry_id: str):
+    #     for db_entry in self.db_entries:
+    #         if db_entry[0] == int(db_entry_id):
+    #             return db_entry
 
     def list_item_selected(self, current: QListWidgetItem, previous: QListWidgetItem):
         self.current = current
-        self.selected_list_item = current.data(0)
-        db_entry_id = self.selected_list_item.split('\t')[0]
-        self.db_entry = self.find_complete_entry_data(db_entry_id)
-        print(self.db_entry)
-        self.entry_data_window = EntryDataWindow(self.db_entry)
+        self.selected_list_item = current.data(1)
+        print(self.selected_list_item)
+        # db_entry_id = self.selected_list_item.split('\t')[0]
+        # self.db_entry = self.find_complete_entry_data(db_entry_id)
+        # print(self.db_entry)
+        self.entry_data_window = EntryDataWindow(self.selected_list_item)
         self.entry_data_window.show()
         self.show_claim_or_user_window()
 
-    def is_claimed(self, db_entry: tuple):
+    def entry_is_claimed(self, db_entry: tuple):
         self.claim_record = get_claim_record_from_db(self.db_filename, db_entry)
         if len(self.claim_record) == 0:
             print('entry not claimed')
@@ -67,9 +69,9 @@ class EntriesListWindow(QWidget):
             return True
 
     def show_claim_or_user_window(self):
-        self.claim_window = ClaimWindow(self.db_entry, self.current, self.db_filename)
-        self.user_data_window = UserDataWindow(self.db_entry, self.db_filename)
-        if self.is_claimed(self.db_entry):
+        self.claim_window = ClaimWindow(self.selected_list_item, self.current, self.db_filename)
+        self.user_data_window = UserDataWindow(self.selected_list_item, self.db_filename)
+        if self.entry_is_claimed(self.selected_list_item):
             self.claim_window.hide()
             self.user_data_window.show()
         else:

@@ -1,4 +1,5 @@
 from PySide6.QtWidgets import QWidget, QLabel, QLineEdit, QCheckBox
+from PySide6.QtCore import Qt
 
 
 class EntryDataWindow(QWidget):
@@ -83,5 +84,7 @@ class EntryDataWindow(QWidget):
         checkbox = QCheckBox(checkbox_text, self)
         checkbox.setChecked(True) if self.db_entry[field] == 'Y' else checkbox.setChecked(False)
         checkbox.move(checkbox_x, checkbox_y)
-        checkbox.setDisabled(True)
+        checkbox.setAttribute(Qt.WA_TransparentForMouseEvents)
+        checkbox.setFocusPolicy(Qt.NoFocus)
+        # checkbox.setDisabled(True)
         return checkbox
