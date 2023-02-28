@@ -92,6 +92,14 @@ def test_user_creation(qtbot):
     assert claim_window.title.text() == 'Professor'
     assert claim_window.department.text() == 'Computer Science'
     claim_window.claim()
+    connection, cursor = open_db(db_filename)
+    cursor.execute("SELECT * FROM users WHERE email = 'jsantore@bridgew.edu'")
+    user_record = cursor.fetchone()
+    assert user_record[0] == 'jsantore@bridgew.edu'
+    assert user_record[1] == 'John'
+    assert user_record[2] == 'Santore'
+    assert user_record[3] == 'Professor'
+    assert user_record[4] == 'Computer Science'
 
 
 def test_user_data_population(qtbot):
