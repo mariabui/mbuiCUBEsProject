@@ -1,5 +1,6 @@
 from api_handler import get_entries
-from db_handler import set_up_db, save_entries_to_entries_table, close_db, open_db, get_entries_from_entries_table, create_entries_table
+from db_handler import set_up_db, open_db, close_db, create_entries_table,\
+    save_entries_to_entries_table, get_entries_from_entries_table
 from EntriesListWindow import EntriesListWindow
 from PySide6.QtWidgets import QListWidgetItem
 
@@ -55,8 +56,11 @@ def test_save_data_to_db():
 
 
 def test_list_item_selected(qtbot):
-    db_entries = get_entries_from_entries_table('test_db.sqlite')
-    entries_list_window = EntriesListWindow(db_entries)
+    db_filename = 'test_db.sqlite'
+    connection, cursor = set_up_db(db_filename)
+    close_db(connection, cursor)
+    db_entries = get_entries_from_entries_table(db_filename)
+    entries_list_window = EntriesListWindow(db_entries, db_filename)
     qtbot.addWidget(entries_list_window)
     list_item = QListWidgetItem('15\tChip\tSkylark\tNickelodeon', listview=entries_list_window.list_view)
     entries_list_window.list_item_selected(list_item, list_item)
