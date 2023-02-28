@@ -1,5 +1,5 @@
 from PySide6.QtWidgets import QWidget, QLabel, QLineEdit
-from db_handler import get_user_record, get_claim_record
+from db_handler import get_user_record_from_db, get_claim_record_from_db
 
 
 class UserDataWindow(QWidget):
@@ -28,9 +28,9 @@ class UserDataWindow(QWidget):
         self.show()
 
     def generate_line(self, field: int, label_text: str, label_x: int, label_y: int, line_x: int, line_y: int, width=None):
-        claim_record = get_claim_record(self.db_filename, self.db_entry)
+        claim_record = get_claim_record_from_db(self.db_filename, self.db_entry)
         if len(claim_record) != 0:
-            self.user_record = get_user_record(self.db_filename, claim_record[0][1])
+            self.user_record = get_user_record_from_db(self.db_filename, claim_record[0][1])
             label = QLabel(label_text, self)
             label.move(label_x, label_y)
             line = QLineEdit('', self) if not self.user_record[0][field] else QLineEdit(self.user_record[0][field], self)

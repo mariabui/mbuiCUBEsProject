@@ -1,6 +1,6 @@
 from PySide6.QtWidgets import QWidget, QLabel, QLineEdit, QPushButton, QListWidgetItem
 from PySide6.QtGui import QColor
-from db_handler import get_user_record, save_user_to_users_table, open_db, close_db, save_claim_to_claims_table
+from db_handler import get_user_record_from_db, save_user_to_db, open_db, close_db, save_claim_to_db
 
 
 class ClaimWindow(QWidget):
@@ -56,7 +56,7 @@ class ClaimWindow(QWidget):
         return field
 
     def user_exists(self):
-        self.user_record = get_user_record(self.db_filename, self.email.text())
+        self.user_record = get_user_record_from_db(self.db_filename, self.email.text())
         print(f'user record: {self.user_record}')
         self.submit_email_button.hide()
         if len(self.user_record) == 0:
@@ -83,6 +83,7 @@ class ClaimWindow(QWidget):
             self.title = self.generate_line(3, 'Title *', 50, 135, 50, 150, 250)
             self.department = self.generate_line(4, 'Department *', 50, 180, 50, 195)
         else:
+            print('generate fields')
             self.first_name = self.generate_field('First', 50, 110, 50, 90)
             self.last_name = self.generate_field('Last', 175, 110, 175, 90)
             self.title = self.generate_field('Title *', 50, 135, 50, 150)
@@ -90,13 +91,13 @@ class ClaimWindow(QWidget):
 
     def save_user_to_users_table(self):
         connection, cursor = open_db(self.db_filename)
-        save_user_to_users_table(tuple([self.email.text(), self.first_name.text(), self.last_name.text(),
-                                        self.title.text(), self.department.text()]), cursor)
+        save_user_to_db(tuple([self.email.text(), self.first_name.text(), self.last_name.text(),
+                               self.title.text(), self.department.text()]), cursor)
         close_db(connection, cursor)
 
     def save_claim_to_claims_table(self):
         connection, cursor = open_db(self.db_filename)
-        save_claim_to_claims_table(tuple([self.db_entry[0], self.email.text()]), cursor)
+        save_claim_to_db(tuple([self.db_entry[0], self.email.text()]), cursor)
         close_db(connection, cursor)
 
     def claim(self):
@@ -104,6 +105,7 @@ class ClaimWindow(QWidget):
             self.save_claim_to_claims_table()
         else:
             self.save_user_to_users_table()
+            print('saved user to db')
             self.save_claim_to_claims_table()
             self.first_name.setReadOnly(True)
             self.last_name.setReadOnly(True)

@@ -2,12 +2,12 @@ from PySide6.QtWidgets import QApplication, QWidget, QListWidget, QListWidgetIte
 from PySide6.QtGui import QColor
 from EntryDataWindow import EntryDataWindow
 from ClaimWindow import ClaimWindow
-from db_handler import get_claim_record
+from db_handler import get_claim_record_from_db
 from UserDataWindow import UserDataWindow
 
 
 class EntriesListWindow(QWidget):
-    def __init__(self, db_entries, db_filename: str):
+    def __init__(self, db_entries: list[tuple], db_filename: str):
         super().__init__()
         self.db_entries = db_entries
         self.db_filename = db_filename
@@ -58,7 +58,7 @@ class EntriesListWindow(QWidget):
         self.show_claim_or_user_window()
 
     def is_claimed(self, db_entry: tuple):
-        self.claim_record = get_claim_record(self.db_filename, db_entry)
+        self.claim_record = get_claim_record_from_db(self.db_filename, db_entry)
         if len(self.claim_record) == 0:
             print('entry not claimed')
             return False

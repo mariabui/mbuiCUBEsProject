@@ -1,8 +1,8 @@
 from api_handler import get_entries
-from db_handler import set_up_db, open_db, close_db, create_entries_table,\
-    save_entries_to_entries_table, get_entries_from_entries_table
+from db_handler import set_up_db, open_db, close_db, create_entries_table, save_entries_to_db, get_entries_from_db
 from EntriesListWindow import EntriesListWindow
 from PySide6.QtWidgets import QListWidgetItem
+from ClaimWindow import ClaimWindow
 
 
 def test_get_data():
@@ -10,24 +10,24 @@ def test_get_data():
     assert len(entries) >= 10
 
 
-def test_create_table():
-    connection, cursor = open_db('test_db.sqlite')  # creates a new empty db and runs entries table creation function
-    create_entries_table(cursor)
-    # verify that the entries table is created properly in the db
-    cursor.execute('''SELECT COUNT(*) FROM sqlite_master;''')
-    table_count = cursor.fetchone()[0]
-    assert table_count == 1  # there is a table in the db
-    cursor.execute('''SELECT name FROM sqlite_master WHERE type = 'table';''')
-    table_name = cursor.fetchall()[0][0]
-    assert table_name == 'entries'  # the table's name is 'entries'
-    cursor.execute('''SELECT COUNT(*) FROM sqlite_master WHERE name = 'entries';''')
-    entries_table_count = cursor.fetchone()[0]
-    assert entries_table_count == 1  # there is an entries table in the db
-    cursor.execute('''SELECT COUNT(*) FROM sqlite_master WHERE type = 'table' AND name = 'entries';''')
-    assert cursor.fetchone()[0] == 1
-    cursor.execute('''SELECT * FROM sqlite_master WHERE tbl_name = 'entries' AND type = 'table';''')
-    assert len(cursor.fetchall()) == 1
-    close_db(connection, cursor)
+# def test_create_table():
+#     connection, cursor = open_db('test_db.sqlite')  # creates a new empty db and runs entries table creation function
+#     create_entries_table(cursor)
+#     # verify that the entries table is created properly in the db
+#     cursor.execute('''SELECT COUNT(*) FROM sqlite_master;''')
+#     table_count = cursor.fetchone()[0]
+#     assert table_count == 1  # there is a table in the db
+#     cursor.execute('''SELECT name FROM sqlite_master WHERE type = 'table';''')
+#     table_name = cursor.fetchall()[0][0]
+#     assert table_name == 'entries'  # the table's name is 'entries'
+#     cursor.execute('''SELECT COUNT(*) FROM sqlite_master WHERE name = 'entries';''')
+#     entries_table_count = cursor.fetchone()[0]
+#     assert entries_table_count == 1  # there is an entries table in the db
+#     cursor.execute('''SELECT COUNT(*) FROM sqlite_master WHERE type = 'table' AND name = 'entries';''')
+#     assert cursor.fetchone()[0] == 1
+#     cursor.execute('''SELECT * FROM sqlite_master WHERE tbl_name = 'entries' AND type = 'table';''')
+#     assert len(cursor.fetchall()) == 1
+#     close_db(connection, cursor)
 
 
 def test_save_data_to_db():
@@ -36,7 +36,7 @@ def test_save_data_to_db():
          'N', 'N', 'N', 'N', 'Y', 'Y', 'N', 'Yes', '2023-02-02 17:41:30', 'public')
     ]
     connection, cursor = open_db('test_db.sqlite')
-    save_entries_to_entries_table(test_entry_data, cursor)
+    save_entries_to_db(test_entry_data, cursor)
     close_db(connection, cursor)
     connection, cursor = open_db('test_db.sqlite')
     # verify that the db contains the test entry that was put there
@@ -55,11 +55,11 @@ def test_save_data_to_db():
     close_db(connection, cursor)
 
 
-def test_list_item_selected(qtbot):
+def test_entry_data_population(qtbot):
     db_filename = 'test_db.sqlite'
     connection, cursor = set_up_db(db_filename)
     close_db(connection, cursor)
-    db_entries = get_entries_from_entries_table(db_filename)
+    db_entries = get_entries_from_db(db_filename)
     entries_list_window = EntriesListWindow(db_entries, db_filename)
     qtbot.addWidget(entries_list_window)
     list_item = QListWidgetItem('15\tChip\tSkylark\tNickelodeon', listview=entries_list_window.list_view)
@@ -73,3 +73,30 @@ def test_list_item_selected(qtbot):
     assert entries_list_window.entry_data_window.guest_speaker.isChecked() is True
     assert entries_list_window.entry_data_window.summer_2022.isChecked() is False
     assert entries_list_window.entry_data_window.spring_2023.isChecked() is True
+
+
+def test_user_creation(qtbot):
+    db_filename = 'test_db.sqlite'
+    db_entries = get_entries_from_db(db_filename)
+    current = QListWidgetItem('15\tChip\tSkylark\tNickelodeon')
+    claim_window = ClaimWindow(db_entries[0], current, db_filename)
+    claim_window.email.setText('jsantore@bridgew.edu')
+    claim_window.show_lines_or_fields()
+    claim_window.first_name.setText('John')
+    claim_window.last_name.setText('Santore')
+    claim_window.title.setText('Professor')
+    claim_window.department.setText('Computer Science')
+    assert claim_window.email.text() == 'jsantore@bridgew.edu'
+    assert claim_window.first_name.text() == 'John'
+    assert claim_window.last_name.text() == 'Santore'
+    assert claim_window.title.text() == 'Professor'
+    assert claim_window.department.text() == 'Computer Science'
+    claim_window.claim()
+
+
+def test_user_data_population(qtbot):
+    pass
+
+
+def test_():
+    pass

@@ -127,32 +127,32 @@ def process_entries_data(entries: list[dict]) -> list[tuple]:
     return entries_data
 
 
-def save_entries_to_entries_table(entries_data: list[tuple], cursor: sqlite3.Cursor):
+def save_entries_to_db(entries_data: list[tuple], cursor: sqlite3.Cursor):
     try:
-        cursor.executemany('''INSERT INTO entries VALUES(
+        cursor.executemany('''INSERT OR IGNORE INTO entries VALUES(
         ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);''', entries_data)
     except sqlite3.Error as error:
         print(f'Failed to save entries to database, {error}')
         sys.exit(-1)
 
 
-def save_user_to_users_table(user_data: tuple, cursor: sqlite3.Cursor):
+def save_user_to_db(user_data: tuple, cursor: sqlite3.Cursor):
     try:
-        cursor.execute('''INSERT INTO users VALUES(?, ?, ?, ?, ?);''', user_data)
+        cursor.execute('''INSERT OR IGNORE INTO users VALUES(?, ?, ?, ?, ?);''', user_data)
     except sqlite3.Error as error:
         print(f'Failed to save user to database, {error}')
         sys.exit(-1)
 
 
-def save_claim_to_claims_table(claim_data: tuple, cursor: sqlite3.Cursor):
+def save_claim_to_db(claim_data: tuple, cursor: sqlite3.Cursor):
     try:
-        cursor.execute('''INSERT INTO claims VALUES(?, ?);''', claim_data)
+        cursor.execute('''INSERT OR IGNORE INTO claims VALUES(?, ?);''', claim_data)
     except sqlite3.Error as error:
         print(f'Failed to save claim to database, {error}')
         sys.exit(-1)
 
 
-def get_entries_from_entries_table(db_filename: str) -> list[tuple]:
+def get_entries_from_db(db_filename: str) -> list[tuple]:
     connection, cursor = open_db(db_filename)
     cursor.execute('''SELECT * FROM entries;''')
     db_entries = cursor.fetchall()
@@ -160,7 +160,7 @@ def get_entries_from_entries_table(db_filename: str) -> list[tuple]:
     return db_entries
 
 
-def get_user_record(db_filename: str, email: str):
+def get_user_record_from_db(db_filename: str, email: str):
     connection, cursor = open_db(db_filename)
     cursor.execute('''SELECT * FROM users WHERE email = ?;''', [email])
     user_record = cursor.fetchall()
@@ -168,7 +168,7 @@ def get_user_record(db_filename: str, email: str):
     return user_record
 
 
-def get_claim_record(db_filename: str, entry: tuple):
+def get_claim_record_from_db(db_filename: str, entry: tuple):
     connection, cursor = open_db(db_filename)
     cursor.execute('''SELECT * FROM claims WHERE entry_id = ?;''', [entry[0]])
     claim_record = cursor.fetchall()

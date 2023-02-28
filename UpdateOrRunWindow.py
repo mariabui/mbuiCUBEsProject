@@ -1,7 +1,6 @@
 from PySide6.QtWidgets import QWidget, QLabel, QPushButton
 from api_handler import get_entries
-from db_handler import open_db, close_db, clear_entries_table, process_entries_data,\
-    save_entries_to_entries_table, get_entries_from_entries_table
+from db_handler import open_db, close_db, clear_entries_table, process_entries_data, save_entries_to_db, get_entries_from_db
 from EntriesListWindow import EntriesListWindow
 
 
@@ -33,14 +32,14 @@ class UpdateOrRunWindow(QWidget):
         connection, cursor = open_db(self.db_filename)
         clear_entries_table(cursor)
         entries_data = process_entries_data(entries)
-        save_entries_to_entries_table(entries_data, cursor)
+        save_entries_to_db(entries_data, cursor)
         close_db(connection, cursor)
-        self.db_entries = get_entries_from_entries_table(self.db_filename)
+        self.db_entries = get_entries_from_db(self.db_filename)
         self.show_entries_list_window()
 
     def run(self):
         print('user chose to run visual')
-        self.db_entries = get_entries_from_entries_table(self.db_filename)
+        self.db_entries = get_entries_from_db(self.db_filename)
         self.show_entries_list_window()
 
     def show_entries_list_window(self):
