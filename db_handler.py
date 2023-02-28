@@ -62,10 +62,55 @@ def clear_entries_table(cursor: sqlite3.Cursor):
         sys.exit(-1)
 
 
+def create_users_table(cursor: sqlite3.Cursor):
+    try:
+        cursor.execute('''CREATE TABLE IF NOT EXISTS users(
+                       email TEXT PRIMARY KEY,
+                       first_name TEXT NOT NULL,
+                       last_name TEXT NOT NULL,
+                       title TEXT NOT NULL,
+                       department TEXT NOT NULL);''')
+    except sqlite3.Error as error:
+        print(f'Failed to create users table, {error}')
+        sys.exit(-1)
+
+
+def clear_users_table(cursor: sqlite3.Cursor):
+    try:
+        cursor.execute('''DELETE FROM users;''')
+    except sqlite3.Error as error:
+        print(f'Failed to clear users table, {error}')
+        sys.exit(-1)
+
+
+def create_claims_table(cursor: sqlite3.Cursor):
+    try:
+        cursor.execute('''CREATE TABLE IF NOT EXISTS claims(
+                       entry_id INTEGER,
+                       email TEXT,
+                       FOREIGN KEY (entry_id) REFERENCES entries (entry_id)
+                       ON DELETE CASCADE ON UPDATE NO ACTION,
+                       FOREIGN KEY (email) REFERENCES users (email)
+                       ON DELETE CASCADE ON UPDATE NO ACTION);''')
+    except sqlite3.Error as error:
+        print(f'Failed to create claims table, {error}')
+        sys.exit(-1)
+
+
+def clear_claims_table(cursor: sqlite3.Cursor):
+    try:
+        cursor.execute('''DELETE FROM claims;''')
+    except sqlite3.Error as error:
+        print(f'Failed to clear claims table, {error}')
+        sys.exit(-1)
+
+
 def set_up_db(db_filename: str) -> tuple[sqlite3.Connection, sqlite3.Cursor]:
     connection, cursor = open_db(db_filename)
     create_entries_table(cursor)
-    clear_entries_table(cursor)
+    create_users_table(cursor)
+    create_claims_table(cursor)
+    # clear_entries_table(cursor)
     return connection, cursor
 
 
@@ -82,7 +127,7 @@ def process_entries_data(entries: list[dict]) -> list[tuple]:
     return entries_data
 
 
-def save_entries_to_db(entries_data: list[tuple], cursor: sqlite3.Cursor):
+def save_entries_to_entries_table(entries_data: list[tuple], cursor: sqlite3.Cursor):
     try:
         cursor.executemany('''INSERT INTO entries VALUES(
         ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);''', entries_data)
@@ -91,9 +136,41 @@ def save_entries_to_db(entries_data: list[tuple], cursor: sqlite3.Cursor):
         sys.exit(-1)
 
 
-def get_entries_from_db(db_filename: str) -> list[tuple]:
+def save_user_to_users_table(user_data: tuple, cursor: sqlite3.Cursor):
+    try:
+        cursor.execute('''INSERT INTO users VALUES(?, ?, ?, ?, ?);''', user_data)
+    except sqlite3.Error as error:
+        print(f'Failed to save user to database, {error}')
+        sys.exit(-1)
+
+
+def save_claim_to_claims_table(claim_data: tuple, cursor: sqlite3.Cursor):
+    try:
+        cursor.execute('''INSERT INTO claims VALUES(?, ?);''', claim_data)
+    except sqlite3.Error as error:
+        print(f'Failed to save claim to database, {error}')
+        sys.exit(-1)
+
+
+def get_entries_from_entries_table(db_filename: str) -> list[tuple]:
     connection, cursor = open_db(db_filename)
     cursor.execute('''SELECT * FROM entries;''')
     db_entries = cursor.fetchall()
     close_db(connection, cursor)
     return db_entries
+
+
+def get_user_record(db_filename: str, email: str):
+    connection, cursor = open_db(db_filename)
+    cursor.execute('''SELECT * FROM users WHERE email = ?;''', [email])
+    user_record = cursor.fetchall()
+    close_db(connection, cursor)
+    return user_record
+
+
+def get_claim_record(db_filename: str, entry: tuple):
+    connection, cursor = open_db(db_filename)
+    cursor.execute('''SELECT * FROM claims WHERE entry_id = ?;''', [entry[0]])
+    claim_record = cursor.fetchall()
+    close_db(connection, cursor)
+    return claim_record
