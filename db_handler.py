@@ -88,8 +88,10 @@ def create_claims_table(cursor: sqlite3.Cursor):
         cursor.execute('''CREATE TABLE IF NOT EXISTS claims(
                        entry_id INTEGER,
                        email TEXT,
-                       FOREIGN KEY (entry_id) REFERENCES entries (entry_id),
-                       FOREIGN KEY (email) REFERENCES faculties (email));''')
+                       FOREIGN KEY (entry_id) REFERENCES entries (entry_id)
+                       ON DELETE CASCADE ON UPDATE NO ACTION,
+                       FOREIGN KEY (email) REFERENCES users (email)
+                       ON DELETE CASCADE ON UPDATE NO ACTION);''')
     except sqlite3.Error as error:
         print(f'Failed to create claims table, {error}')
         sys.exit(-1)
@@ -125,7 +127,7 @@ def process_entries_data(entries: list[dict]) -> list[tuple]:
     return entries_data
 
 
-def save_entries_to_db(entries_data: list[tuple], cursor: sqlite3.Cursor):
+def save_entries_to_entries_table(entries_data: list[tuple], cursor: sqlite3.Cursor):
     try:
         cursor.executemany('''INSERT INTO entries VALUES(
         ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);''', entries_data)
@@ -134,23 +136,7 @@ def save_entries_to_db(entries_data: list[tuple], cursor: sqlite3.Cursor):
         sys.exit(-1)
 
 
-def get_entries_from_db(db_filename: str) -> list[tuple]:
-    connection, cursor = open_db(db_filename)
-    cursor.execute('''SELECT * FROM entries;''')
-    db_entries = cursor.fetchall()
-    close_db(connection, cursor)
-    return db_entries
-
-
-def get_user_from_db(db_filename: str, email: str):
-    connection, cursor = open_db(db_filename)
-    cursor.execute('''SELECT * FROM users WHERE email = ?;''', [email])
-    user_record = cursor.fetchall()
-    close_db(connection, cursor)
-    return user_record
-
-
-def save_user_to_db(user_data: tuple, cursor: sqlite3.Cursor):
+def save_user_to_users_table(user_data: tuple, cursor: sqlite3.Cursor):
     try:
         cursor.execute('''INSERT INTO users VALUES(?, ?, ?, ?, ?);''', user_data)
     except sqlite3.Error as error:
@@ -158,7 +144,7 @@ def save_user_to_db(user_data: tuple, cursor: sqlite3.Cursor):
         sys.exit(-1)
 
 
-def save_claim_to_db(claim_data: tuple, cursor: sqlite3.Cursor):
+def save_claim_to_claims_table(claim_data: tuple, cursor: sqlite3.Cursor):
     try:
         cursor.execute('''INSERT INTO claims VALUES(?, ?);''', claim_data)
     except sqlite3.Error as error:
@@ -166,9 +152,25 @@ def save_claim_to_db(claim_data: tuple, cursor: sqlite3.Cursor):
         sys.exit(-1)
 
 
-def get_entry_claim_from_db(db_filename: str, entry: tuple):
+def get_entries_from_entries_table(db_filename: str) -> list[tuple]:
+    connection, cursor = open_db(db_filename)
+    cursor.execute('''SELECT * FROM entries;''')
+    db_entries = cursor.fetchall()
+    close_db(connection, cursor)
+    return db_entries
+
+
+def get_user_record(db_filename: str, email: str):
+    connection, cursor = open_db(db_filename)
+    cursor.execute('''SELECT * FROM users WHERE email = ?;''', [email])
+    user_record = cursor.fetchall()
+    close_db(connection, cursor)
+    return user_record
+
+
+def get_claim_record(db_filename: str, entry: tuple):
     connection, cursor = open_db(db_filename)
     cursor.execute('''SELECT * FROM claims WHERE entry_id = ?;''', [entry[0]])
-    entry_record = cursor.fetchall()
+    claim_record = cursor.fetchall()
     close_db(connection, cursor)
-    return entry_record
+    return claim_record

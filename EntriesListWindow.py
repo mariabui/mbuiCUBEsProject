@@ -2,7 +2,7 @@ from PySide6.QtWidgets import QApplication, QWidget, QListWidget, QListWidgetIte
 from PySide6.QtGui import QColor
 from EntryDataWindow import EntryDataWindow
 from ClaimWindow import ClaimWindow
-from db_handler import get_entry_claim_from_db
+from db_handler import get_claim_record
 from UserDataWindow import UserDataWindow
 
 
@@ -10,13 +10,14 @@ class EntriesListWindow(QWidget):
     def __init__(self, db_entries):
         super().__init__()
         self.db_entries = db_entries
-        self.db_entry = None
         self.list_view = None
+        self.current = None
+        self.selected_list_item = None
+        self.db_entry = None
         self.entry_data_window = None
         self.claim_window = None
         self.user_data_window = None
-        self.selected_list_item = None
-        self.current = None
+        self.claim_record = None
         # self.claim_button = None
         self.setup()
 
@@ -45,7 +46,7 @@ class EntriesListWindow(QWidget):
             # print(list_item)
             # self.check_entry_claimed(db_entry)
             # print(db_entry)
-            if self.check_entry_claimed(db_entry):
+            if self.is_claimed(db_entry):
                 list_item.setForeground(QColor('red'))
 
     def find_complete_entry_data(self, db_entry_id: str):
@@ -55,7 +56,7 @@ class EntriesListWindow(QWidget):
 
     def list_item_selected(self, current: QListWidgetItem, previous: QListWidgetItem):
         self.current = current
-        print(self.current)
+        # print(self.current)
         self.selected_list_item = current.data(0)
         db_entry_id = self.selected_list_item.split('\t')[0]
         self.db_entry = self.find_complete_entry_data(db_entry_id)
@@ -63,26 +64,26 @@ class EntriesListWindow(QWidget):
         self.entry_data_window = EntryDataWindow(self.db_entry)
         self.entry_data_window.show()
         # self.check_entry_claimed(self.db_entry)
-        self.show_or_hide_claim_window(self.db_entry)
+        self.show_claim_or_user_window()
 
     # def claim(self):
         # self.claim_window = ClaimWindow(self.db_entry)
         # self.claim_window.show()
 
-    def check_entry_claimed(self, db_entry: tuple):
-        entry_record = get_entry_claim_from_db('cubes_db.sqlite', db_entry)
-        if len(entry_record) == 0:
+    def is_claimed(self, db_entry: tuple):
+        self.claim_record = get_claim_record('cubes_db.sqlite', db_entry)
+        if len(self.claim_record) == 0:
             print('entry not claimed')
             return False
         else:
-            print('entry claimed')
+            print('entry is claimed')
             return True
 
-    def show_or_hide_claim_window(self, db_entry: tuple):
+    def show_claim_or_user_window(self):
         self.claim_window = ClaimWindow(self.db_entry, self.current)
         self.user_data_window = UserDataWindow(self.db_entry)
-        claimed = self.check_entry_claimed(db_entry)
-        if claimed:
+        # claimed = self.is_claimed(self.db_entry)
+        if self.is_claimed(self.db_entry):
             self.claim_window.hide()
             self.user_data_window.show()
             # self.claim_button.setDisabled(False)

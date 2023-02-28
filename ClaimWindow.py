@@ -1,6 +1,6 @@
 from PySide6.QtWidgets import QWidget, QLabel, QLineEdit, QPushButton
 from PySide6.QtGui import QColor
-from db_handler import get_user_from_db, save_user_to_db, open_db, close_db, save_claim_to_db
+from db_handler import get_user_record, save_user_to_users_table, open_db, close_db, save_claim_to_claims_table
 
 
 class ClaimWindow(QWidget):
@@ -14,7 +14,7 @@ class ClaimWindow(QWidget):
         self.title = None
         self.department = None
         self.submit_email_button = None
-        self.submit_user_button = None
+        self.claim_button = None
         self.user_record = None
         self.setup()
 
@@ -26,7 +26,7 @@ class ClaimWindow(QWidget):
         self.email = QLineEdit(self)
         self.email.move(50, 45)
         self.submit_email_button = QPushButton('Submit', self)
-        self.submit_email_button.clicked.connect(self.submit_email)
+        self.submit_email_button.clicked.connect(self.show_lines_or_fields)
         self.submit_email_button.resize(self.submit_email_button.sizeHint())
         self.submit_email_button.move(170, 265)
         self.show()
@@ -54,54 +54,76 @@ class ClaimWindow(QWidget):
         field.show()
         return field
 
-    def submit_email(self):
+    def user_exists(self):
         print('clicked submit email')
-        self.user_record = get_user_from_db('cubes_db.sqlite', self.email.text())
+        self.user_record = get_user_record('cubes_db.sqlite', self.email.text())
         print(self.user_record)
-        self.check_user_exists_in_db(self.user_record)
         self.submit_email_button.hide()
+        if len(self.user_record) == 0:
+            print('user does not exist')
+            return False
+        else:
+            print('user exists')
+            return True
+        # self.check_user_exists_in_db(self.user_record)
 
-    def check_user_exists_in_db(self, user_record: list):
+    def show_lines_or_fields(self):
         name_label = QLabel('Name *', self)
         name_label.move(50, 75)
         name_label.show()
-        self.submit_user_button = QPushButton('Claim', self)
-        self.submit_user_button.clicked.connect(self.submit_user_and_claim)
-        self.submit_user_button.resize(self.submit_user_button.sizeHint())
-        self.submit_user_button.move(170, 265)
-        self.submit_user_button.show()
-        if len(user_record) == 0:
-            print('email in not db')
-            self.first_name = self.generate_field('First', 50, 110, 50, 90)
-            self.last_name = self.generate_field('Last', 175, 110, 175, 90)
-            self.title = self.generate_field('Title *', 50, 135, 50, 150)
-            self.department = self.generate_field('Department', 50, 180, 50, 195)
-        else:
-            print('email in db')
+        self.claim_button = QPushButton('Claim', self)
+        self.claim_button.clicked.connect(self.claim)
+        self.claim_button.resize(self.claim_button.sizeHint())
+        self.claim_button.move(170, 265)
+        self.claim_button.show()
+        if self.user_exists():
+            self.email.setReadOnly(True)
             self.first_name = self.generate_line(1, 'First', 50, 110, 50, 90)
             self.last_name = self.generate_line(2, 'Last', 175, 110, 175, 90)
             self.title = self.generate_line(3, 'Title *', 50, 135, 50, 150, 250)
             self.department = self.generate_line(4, 'Department *', 50, 180, 50, 195)
-            self.save_claim()
+            # self.save_claim_to_claims_table()
+        else:
+            self.first_name = self.generate_field('First', 50, 110, 50, 90)
+            self.last_name = self.generate_field('Last', 175, 110, 175, 90)
+            self.title = self.generate_field('Title *', 50, 135, 50, 150)
+            self.department = self.generate_field('Department', 50, 180, 50, 195)
+            # self.save_user_to_users_table()
+            # self.save_claim_to_claims_table()
 
-    def submit_user_and_claim(self):
-        print('clicked submit user data')
+    def save_user_to_users_table(self):
+        # print('clicked submit user data')
         connection, cursor = open_db('cubes_db.sqlite')
-        save_user_to_db(tuple([self.email.text(), self.first_name.text(), self.last_name.text(), self.title.text(), self.department.text()]), cursor)
-        print('saved user to db')
+        save_user_to_users_table(tuple([self.email.text(), self.first_name.text(), self.last_name.text(), self.title.text(), self.department.text()]), cursor)
+        # print('saved user to db')
         close_db(connection, cursor)
-        self.save_claim()
-        print('saved claim to db')
-        self.current.setForeground(QColor('red'))
-        self.first_name.setReadOnly(True)
-        self.last_name.setReadOnly(True)
-        self.title.setReadOnly(True)
-        self.department.setReadOnly(True)
+        # self.save_claim_to_claims_table()
+        # print('saved claim to db')
+        # self.current.setForeground(QColor('red'))
+        # self.first_name.setReadOnly(True)
+        # self.last_name.setReadOnly(True)
+        # self.title.setReadOnly(True)
+        # self.department.setReadOnly(True)
 
-    def save_claim(self):
+    def save_claim_to_claims_table(self):
         connection, cursor = open_db('cubes_db.sqlite')
-        save_claim_to_db(tuple([self.db_entry[0], self.email.text()]), cursor)
+        save_claim_to_claims_table(tuple([self.db_entry[0], self.email.text()]), cursor)
         close_db(connection, cursor)
-        self.current.setForeground(QColor('red'))
+        # self.current.setForeground(QColor('red'))
+        # self.email.setReadOnly(True)
+        # self.claim_button.setDisabled(True)
+
+    def claim(self):
+        if self.user_exists():
+            self.save_claim_to_claims_table()
+        else:
+            self.save_user_to_users_table()
+            self.save_claim_to_claims_table()
+            self.first_name.setReadOnly(True)
+            self.last_name.setReadOnly(True)
+            self.title.setReadOnly(True)
+            self.department.setReadOnly(True)
         self.email.setReadOnly(True)
-        self.submit_user_button.setDisabled(True)
+        self.current.setForeground(QColor('red'))
+        self.claim_button.setDisabled(True)
+        print('clicked claim button')

@@ -1,5 +1,5 @@
 from api_handler import get_entries, save_entries_to_text_file
-from db_handler import set_up_db, process_entries_data, save_entries_to_db, close_db, get_entries_from_db
+from db_handler import set_up_db, process_entries_data, save_entries_to_entries_table, close_db, get_entries_from_entries_table
 from gui_handler import update_or_run
 
 
