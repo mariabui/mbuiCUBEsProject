@@ -113,7 +113,7 @@ class ClaimWindow(QWidget):
             self.last_name.setReadOnly(True)
             self.title.setReadOnly(True)
             self.department.setReadOnly(True)
-        success_message = QLabel(f'Successfully claimed!', self)
+        success_message = QLabel('Successfully claimed!', self)
         success_message.move(135, 235)
         success_message.show()
         self.email.setReadOnly(True)
