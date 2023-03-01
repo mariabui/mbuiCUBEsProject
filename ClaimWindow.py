@@ -22,6 +22,8 @@ class ClaimWindow(QWidget):
     def setup(self):
         self.setWindowTitle(f'Claim Entry {self.db_entry[0]}')
         self.setGeometry(950, 0, 400, 300)
+        instructions = QLabel('Please fill out the information below. ', self)
+        instructions.move(95, 10)
         email_label = QLabel('Email *', self)
         email_label.move(50, 30)
         self.email = QLineEdit(self)
@@ -111,6 +113,9 @@ class ClaimWindow(QWidget):
             self.last_name.setReadOnly(True)
             self.title.setReadOnly(True)
             self.department.setReadOnly(True)
+        success_message = QLabel(f'Successfully claimed!', self)
+        success_message.move(135, 235)
+        success_message.show()
         self.email.setReadOnly(True)
         self.current.setForeground(QColor('red'))
         self.claim_button.setDisabled(True)
