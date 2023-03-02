@@ -74,7 +74,7 @@ class ClaimWindow(QWidget):
         self.claim_button.move(170, 265)
         self.claim_button.show()
         if self.user_exists():
-            print('user exists')
+            print('user exists, autofill user data')
             self.email.setReadOnly(True)
             self.first_name = self.generate_line(1, 'First', 50, 110, 50, 90)
             self.last_name = self.generate_line(2, 'Last', 175, 110, 175, 90)
@@ -106,8 +106,9 @@ class ClaimWindow(QWidget):
         else:
             self.save_user_to_db()
             print('saved user to db')
-            self.email.setReadOnly(True)
             self.save_claim_to_db()
+            print('saved claim to db')
+            self.email.setReadOnly(True)
             self.first_name.setReadOnly(True)
             self.last_name.setReadOnly(True)
             self.title.setReadOnly(True)

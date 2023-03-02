@@ -1,6 +1,7 @@
-import os
+# import os
 from api_handler import get_entries
-from db_handler import set_up_db, open_db, close_db, create_entries_table, save_entries_to_db, get_entry_records_from_db
+from db_handler import set_up_db, open_db, close_db, create_entries_table, save_entries_to_db,\
+    get_entry_records_from_db, get_user_record_from_db
 from EntriesListWindow import EntriesListWindow
 from PySide6.QtWidgets import QListWidgetItem
 from ClaimWindow import ClaimWindow
@@ -63,8 +64,8 @@ def test_entry_data_population(qtbot):
     db_entries = get_entry_records_from_db(db_filename)
     entries_list_window = EntriesListWindow(db_filename, db_entries)
     qtbot.addWidget(entries_list_window)
-    list_item = QListWidgetItem('15\tChip\tSkylark\tNickelodeon', listview=entries_list_window.list_view)
-    entries_list_window.list_item_selected(list_item, list_item)
+    current = QListWidgetItem('15\tChip\tSkylark\tNickelodeon', listview=entries_list_window.list_view)
+    entries_list_window.list_item_selected(current, current)
     assert entries_list_window.entry_data_window.first_name.text() == 'Chip'
     assert entries_list_window.entry_data_window.last_name.text() == 'Skylark'
     assert entries_list_window.entry_data_window.title.text() == 'Singer'
@@ -84,22 +85,25 @@ def test_user_creation(qtbot):
     qtbot.addWidget(claim_window)
     claim_window.email.setText('jsantore@bridgew.edu')
     claim_window.show_lines_or_fields()
+    assert claim_window.user_exists() is False
+    assert claim_window.user_record == []
     claim_window.first_name.setText('John')
     claim_window.last_name.setText('Santore')
     claim_window.title.setText('Professor')
     claim_window.department.setText('Computer Science')
     claim_window.claim()
-    connection, cursor = open_db(db_filename)
-    cursor.execute('''SELECT * FROM users WHERE email = 'jsantore@bridgew.edu';''')
-    user_record = cursor.fetchone()
-    assert user_record[0] == 'jsantore@bridgew.edu'
-    assert user_record[1] == 'John'
-    assert user_record[2] == 'Santore'
-    assert user_record[3] == 'Professor'
-    assert user_record[4] == 'Computer Science'
+    assert claim_window.user_exists() is True
+    assert claim_window.user_record == [('jsantore@bridgew.edu', 'John', 'Santore', 'Professor', 'Computer Science')]
+    user_record = get_user_record_from_db(db_filename, claim_window.email.text())
+    assert len(user_record) == 1
+    assert user_record[0][0] == 'jsantore@bridgew.edu'
+    assert user_record[0][1] == 'John'
+    assert user_record[0][2] == 'Santore'
+    assert user_record[0][3] == 'Professor'
+    assert user_record[0][4] == 'Computer Science'
 
 
-def test_existing_user_email_data_population(qtbot):
+def test_existing_user_data_population(qtbot):
     db_filename = 'test_db.sqlite'
     db_entries = get_entry_records_from_db(db_filename)
     current = QListWidgetItem('15\tChip\tSkylark\tNickelodeon')
@@ -107,6 +111,8 @@ def test_existing_user_email_data_population(qtbot):
     qtbot.addWidget(claim_window)
     claim_window.email.setText('jsantore@bridgew.edu')
     claim_window.show_lines_or_fields()
+    assert claim_window.user_exists() is True
+    assert claim_window.user_record == [('jsantore@bridgew.edu', 'John', 'Santore', 'Professor', 'Computer Science')]
     assert claim_window.email.text() == 'jsantore@bridgew.edu'
     assert claim_window.first_name.text() == 'John'
     assert claim_window.last_name.text() == 'Santore'
@@ -114,15 +120,15 @@ def test_existing_user_email_data_population(qtbot):
     assert claim_window.department.text() == 'Computer Science'
 
 
-def test_select_claimed_project_claimer_data_population(qtbot):
+def test_claimed_project_claimer_data_population(qtbot):
+    # when selecting a claimed project in the list, display the information about the faculty/user who claimed it.
     db_filename = 'test_db.sqlite'
-    connection, cursor = set_up_db(db_filename)
-    close_db(connection, cursor)
     db_entries = get_entry_records_from_db(db_filename)
     entries_list_window = EntriesListWindow(db_filename, db_entries)
     qtbot.addWidget(entries_list_window)
-    list_item = QListWidgetItem('15\tChip\tSkylark\tNickelodeon', listview=entries_list_window.list_view)
-    entries_list_window.list_item_selected(list_item, list_item)
+    current = QListWidgetItem('15\tChip\tSkylark\tNickelodeon', listview=entries_list_window.list_view)
+    entries_list_window.list_item_selected(current, current)
+    assert entries_list_window.entry_is_claimed(db_entries[0]) is True
     assert entries_list_window.user_data_window.isHidden() is False
     assert entries_list_window.claim_window.isHidden() is True
     assert entries_list_window.user_data_window.email.text() == 'jsantore@bridgew.edu'
