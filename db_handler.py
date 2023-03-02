@@ -110,7 +110,6 @@ def set_up_db(db_filename: str) -> tuple[sqlite3.Connection, sqlite3.Cursor]:
     create_entries_table(cursor)
     create_users_table(cursor)
     create_claims_table(cursor)
-    # clear_entries_table(cursor)
     return connection, cursor
 
 
@@ -152,7 +151,7 @@ def save_claim_to_db(claim_data: tuple, cursor: sqlite3.Cursor):
         sys.exit(-1)
 
 
-def get_entries_from_db(db_filename: str) -> list[tuple]:
+def get_entry_records_from_db(db_filename: str) -> list[tuple]:
     connection, cursor = open_db(db_filename)
     cursor.execute('''SELECT * FROM entries;''')
     db_entries = cursor.fetchall()
@@ -168,9 +167,9 @@ def get_user_record_from_db(db_filename: str, email: str):
     return user_record
 
 
-def get_claim_record_from_db(db_filename: str, entry: tuple):
+def get_claim_record_from_db(db_filename: str, entry_id: int):
     connection, cursor = open_db(db_filename)
-    cursor.execute('''SELECT * FROM claims WHERE entry_id = ?;''', [entry[0]])
+    cursor.execute('''SELECT * FROM claims WHERE entry_id = ?;''', [entry_id])
     claim_record = cursor.fetchall()
     close_db(connection, cursor)
     return claim_record

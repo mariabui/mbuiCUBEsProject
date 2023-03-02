@@ -3,16 +3,17 @@ from db_handler import get_user_record_from_db, get_claim_record_from_db
 
 
 class UserDataWindow(QWidget):
-    def __init__(self, db_entry: tuple, db_filename: str):
+    def __init__(self, db_filename: str, db_entry: tuple):
         super().__init__()
-        self.db_entry = db_entry
         self.db_filename = db_filename
-        self.user_record = None
+        self.db_entry = db_entry
         self.email = None
         self.first_name = None
         self.last_name = None
         self.title = None
         self.department = None
+        self.claim_record = None
+        self.user_record = None
         self.setup()
 
     def setup(self):
@@ -27,13 +28,19 @@ class UserDataWindow(QWidget):
         self.department = self.generate_line(4, 'Department', 50, 180, 50, 195, 265)
         self.show()
 
+    def entry_is_claimed(self, db_entry: tuple):
+        self.claim_record = get_claim_record_from_db(self.db_filename, db_entry[0])
+        if len(self.claim_record) == 0:
+            return False
+        else:
+            return True
+
     def generate_line(self, field: int, label_text: str, label_x: int, label_y: int, line_x: int, line_y: int, width=None):
-        claim_record = get_claim_record_from_db(self.db_filename, self.db_entry)
-        if len(claim_record) != 0:
-            self.user_record = get_user_record_from_db(self.db_filename, claim_record[0][1])
+        if self.entry_is_claimed(self.db_entry):
+            self.user_record = get_user_record_from_db(self.db_filename, self.claim_record[0][1])
             label = QLabel(label_text, self)
             label.move(label_x, label_y)
-            line = QLineEdit('', self) if not self.user_record[0][field] else QLineEdit(self.user_record[0][field], self)
+            line = QLineEdit(self.user_record[0][field], self)
             line.move(line_x, line_y)
             if width:
                 line.setFixedWidth(width)

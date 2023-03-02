@@ -1,6 +1,6 @@
 import os
 from api_handler import get_entries
-from db_handler import set_up_db, open_db, close_db, create_entries_table, save_entries_to_db, get_entries_from_db
+from db_handler import set_up_db, open_db, close_db, create_entries_table, save_entries_to_db, get_entry_records_from_db
 from EntriesListWindow import EntriesListWindow
 from PySide6.QtWidgets import QListWidgetItem
 from ClaimWindow import ClaimWindow
@@ -60,8 +60,8 @@ def test_entry_data_population(qtbot):
     db_filename = 'test_db.sqlite'
     connection, cursor = set_up_db(db_filename)
     close_db(connection, cursor)
-    db_entries = get_entries_from_db(db_filename)
-    entries_list_window = EntriesListWindow(db_entries, db_filename)
+    db_entries = get_entry_records_from_db(db_filename)
+    entries_list_window = EntriesListWindow(db_filename, db_entries)
     qtbot.addWidget(entries_list_window)
     list_item = QListWidgetItem('15\tChip\tSkylark\tNickelodeon', listview=entries_list_window.list_view)
     entries_list_window.list_item_selected(list_item, list_item)
@@ -78,9 +78,9 @@ def test_entry_data_population(qtbot):
 
 def test_user_creation(qtbot):
     db_filename = 'test_db.sqlite'
-    db_entries = get_entries_from_db(db_filename)
+    db_entries = get_entry_records_from_db(db_filename)
     current = QListWidgetItem('15\tChip\tSkylark\tNickelodeon')
-    claim_window = ClaimWindow(db_entries[0], current, db_filename)
+    claim_window = ClaimWindow(db_filename, db_entries[0], current)
     qtbot.addWidget(claim_window)
     claim_window.email.setText('jsantore@bridgew.edu')
     claim_window.show_lines_or_fields()
@@ -101,9 +101,9 @@ def test_user_creation(qtbot):
 
 def test_existing_user_email_data_population(qtbot):
     db_filename = 'test_db.sqlite'
-    db_entries = get_entries_from_db(db_filename)
+    db_entries = get_entry_records_from_db(db_filename)
     current = QListWidgetItem('15\tChip\tSkylark\tNickelodeon')
-    claim_window = ClaimWindow(db_entries[0], current, db_filename)
+    claim_window = ClaimWindow(db_filename, db_entries[0], current)
     qtbot.addWidget(claim_window)
     claim_window.email.setText('jsantore@bridgew.edu')
     claim_window.show_lines_or_fields()
@@ -118,8 +118,8 @@ def test_select_claimed_project_claimer_data_population(qtbot):
     db_filename = 'test_db.sqlite'
     connection, cursor = set_up_db(db_filename)
     close_db(connection, cursor)
-    db_entries = get_entries_from_db(db_filename)
-    entries_list_window = EntriesListWindow(db_entries, db_filename)
+    db_entries = get_entry_records_from_db(db_filename)
+    entries_list_window = EntriesListWindow(db_filename, db_entries)
     qtbot.addWidget(entries_list_window)
     list_item = QListWidgetItem('15\tChip\tSkylark\tNickelodeon', listview=entries_list_window.list_view)
     entries_list_window.list_item_selected(list_item, list_item)
@@ -130,4 +130,4 @@ def test_select_claimed_project_claimer_data_population(qtbot):
     assert entries_list_window.user_data_window.last_name.text() == 'Santore'
     assert entries_list_window.user_data_window.title.text() == 'Professor'
     assert entries_list_window.user_data_window.department.text() == 'Computer Science'
-    os.remove('test_db.sqlite')
+    # os.remove('test_db.sqlite')

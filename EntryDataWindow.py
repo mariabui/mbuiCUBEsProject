@@ -86,5 +86,4 @@ class EntryDataWindow(QWidget):
         checkbox.move(checkbox_x, checkbox_y)
         checkbox.setAttribute(Qt.WA_TransparentForMouseEvents)
         checkbox.setFocusPolicy(Qt.NoFocus)
-        # checkbox.setDisabled(True)
         return checkbox
