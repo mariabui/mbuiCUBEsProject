@@ -20,7 +20,8 @@ The GUI consists of 5 windows:
    * Located on the left of the screen.
    * Displays the entries in a list. If the user has chosen to update the data in the database, an updated list of entries is displayed.
    * Shows a preview of each entry by displaying its associated id, first name, last name, and organization name.
-   * Has a *Quit* button in the bottom right corner of the window.
+   * Claimed entries have red text color.
+   * Has a *Quit* button in the bottom right corner.
 3. *Entry Data*
    * Located in the center of the screen.
    * Displays the complete entry data of the selected entry from the list. The first entry in the list is selected and displayed by default.
@@ -28,11 +29,11 @@ The GUI consists of 5 windows:
 4. *Claim*
    * Located on the right of the screen.
    * Prompts the user to provide their email, first name, last name, title, and department to claim the selected entry.
-   * When an unclaimed entry is selected, this window is shown.
+   * Shows when an unclaimed entry is selected.
 5. *User Data*
    * Located on the right of the screen.
    * Displays the selected entry's claimer's email, first name, last name, title, and department that they have provided.
-   * When a claimed entry is selected, this window is shown.
+   * Shows when a claimed entry is selected.
 
 ## What Is Missing from the Project
 None.
