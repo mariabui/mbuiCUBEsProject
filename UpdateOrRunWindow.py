@@ -38,7 +38,6 @@ class UpdateOrRunWindow(QWidget):
 
     def run(self):
         print('user clicked run visual button')
-        # self.db_entries = get_entries_from_db(self.db_filename)
         self.show_entries_list_window()
 
     def show_entries_list_window(self):

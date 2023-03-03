@@ -54,14 +54,6 @@ def create_entries_table(cursor: sqlite3.Cursor):
         sys.exit(-1)
 
 
-def clear_entries_table(cursor: sqlite3.Cursor):
-    try:
-        cursor.execute('''DELETE FROM entries;''')
-    except sqlite3.Error as error:
-        print(f'Failed to clear entries table, {error}')
-        sys.exit(-1)
-
-
 def create_users_table(cursor: sqlite3.Cursor):
     try:
         cursor.execute('''CREATE TABLE IF NOT EXISTS users(
@@ -75,17 +67,10 @@ def create_users_table(cursor: sqlite3.Cursor):
         sys.exit(-1)
 
 
-def clear_users_table(cursor: sqlite3.Cursor):
-    try:
-        cursor.execute('''DELETE FROM users;''')
-    except sqlite3.Error as error:
-        print(f'Failed to clear users table, {error}')
-        sys.exit(-1)
-
-
 def create_claims_table(cursor: sqlite3.Cursor):
     try:
         cursor.execute('''CREATE TABLE IF NOT EXISTS claims(
+                       claim_id INTEGER PRIMARY KEY,
                        entry_id INTEGER,
                        email TEXT,
                        FOREIGN KEY (entry_id) REFERENCES entries (entry_id)
@@ -94,14 +79,6 @@ def create_claims_table(cursor: sqlite3.Cursor):
                        ON DELETE CASCADE ON UPDATE NO ACTION);''')
     except sqlite3.Error as error:
         print(f'Failed to create claims table, {error}')
-        sys.exit(-1)
-
-
-def clear_claims_table(cursor: sqlite3.Cursor):
-    try:
-        cursor.execute('''DELETE FROM claims;''')
-    except sqlite3.Error as error:
-        print(f'Failed to clear claims table, {error}')
         sys.exit(-1)
 
 
@@ -145,7 +122,7 @@ def save_user_to_db(user_data: tuple, cursor: sqlite3.Cursor):
 
 def save_claim_to_db(claim_data: tuple, cursor: sqlite3.Cursor):
     try:
-        cursor.execute('''INSERT OR IGNORE INTO claims VALUES(?, ?);''', claim_data)
+        cursor.execute('''INSERT OR IGNORE INTO claims (entry_id, email) VALUES(?, ?);''', claim_data)
     except sqlite3.Error as error:
         print(f'Failed to save claim to database, {error}')
         sys.exit(-1)
@@ -167,9 +144,9 @@ def get_user_record_from_db(db_filename: str, email: str):
     return user_record
 
 
-def get_claim_record_from_db(db_filename: str, entry_id: int):
+def get_claim_record_from_db(db_filename: str, db_entry: tuple):
     connection, cursor = open_db(db_filename)
-    cursor.execute('''SELECT * FROM claims WHERE entry_id = ?;''', [entry_id])
+    cursor.execute('''SELECT * FROM claims WHERE entry_id = ?;''', [db_entry[0]])
     claim_record = cursor.fetchall()
     close_db(connection, cursor)
     return claim_record

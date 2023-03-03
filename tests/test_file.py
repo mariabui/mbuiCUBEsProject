@@ -1,4 +1,4 @@
-# import os
+import os
 from api_handler import get_entries
 from db_handler import set_up_db, open_db, close_db, create_entries_table, save_entries_to_db,\
     get_entry_records_from_db, get_user_record_from_db
@@ -12,7 +12,7 @@ def test_get_data():
     assert len(entries) >= 10
 
 
-def test_create_table():
+def test_table_creation():
     connection, cursor = open_db('test_db.sqlite')  # creates a new empty db and runs entries table creation function
     create_entries_table(cursor)
     # verify that the entries table is created properly in the db
@@ -78,20 +78,25 @@ def test_entry_data_population(qtbot):
 
 
 def test_user_creation(qtbot):
+    """
+    User creation functionality is implemented in the Claim window.
+    When a new user claims an entry, their user data is saved to the users table in the database.
+    """
     db_filename = 'test_db.sqlite'
     db_entries = get_entry_records_from_db(db_filename)
     current = QListWidgetItem('15\tChip\tSkylark\tNickelodeon')
     claim_window = ClaimWindow(db_filename, db_entries[0], current)
     qtbot.addWidget(claim_window)
     claim_window.email.setText('jsantore@bridgew.edu')
-    claim_window.show_lines_or_fields()
+    claim_window.show_fields()  # this method is called when the user submits their email
     assert claim_window.user_exists() is False
     assert claim_window.user_record == []
+    # the user fills in their own data
     claim_window.first_name.setText('John')
     claim_window.last_name.setText('Santore')
     claim_window.title.setText('Professor')
     claim_window.department.setText('Computer Science')
-    claim_window.claim()
+    claim_window.claim()  # this method saves the new user data into the db along with their claim
     assert claim_window.user_exists() is True
     assert claim_window.user_record == [('jsantore@bridgew.edu', 'John', 'Santore', 'Professor', 'Computer Science')]
     user_record = get_user_record_from_db(db_filename, claim_window.email.text())
@@ -104,15 +109,19 @@ def test_user_creation(qtbot):
 
 
 def test_existing_user_data_population(qtbot):
+    """
+    When an existing user enters their email to submit a claim, the claim window autofills their user data.
+    """
     db_filename = 'test_db.sqlite'
     db_entries = get_entry_records_from_db(db_filename)
     current = QListWidgetItem('15\tChip\tSkylark\tNickelodeon')
     claim_window = ClaimWindow(db_filename, db_entries[0], current)
     qtbot.addWidget(claim_window)
     claim_window.email.setText('jsantore@bridgew.edu')
-    claim_window.show_lines_or_fields()
+    claim_window.show_fields()  # existing user submits their email
     assert claim_window.user_exists() is True
     assert claim_window.user_record == [('jsantore@bridgew.edu', 'John', 'Santore', 'Professor', 'Computer Science')]
+    # fields are autofilled with the ir existing user's data
     assert claim_window.email.text() == 'jsantore@bridgew.edu'
     assert claim_window.first_name.text() == 'John'
     assert claim_window.last_name.text() == 'Santore'
@@ -120,20 +129,27 @@ def test_existing_user_data_population(qtbot):
     assert claim_window.department.text() == 'Computer Science'
 
 
-def test_claimed_project_claimer_data_population(qtbot):
-    # when selecting a claimed project in the list, display the information about the faculty/user who claimed it.
+def test_claimer_data_population(qtbot):
+    """
+    When a claimed entry (project) from the list is selected, both the full CUBEs project data and
+    the information about the faculty/user who claimed it are displayed.
+    A previous test ('test_entry_data_population') verifies that the selected CUBEs project data is displayed.
+    """
     db_filename = 'test_db.sqlite'
     db_entries = get_entry_records_from_db(db_filename)
     entries_list_window = EntriesListWindow(db_filename, db_entries)
     qtbot.addWidget(entries_list_window)
     current = QListWidgetItem('15\tChip\tSkylark\tNickelodeon', listview=entries_list_window.list_view)
-    entries_list_window.list_item_selected(current, current)
+    entries_list_window.list_item_selected(current, current)  # a claimed project is selected
     assert entries_list_window.entry_is_claimed(db_entries[0]) is True
-    assert entries_list_window.user_data_window.isHidden() is False
-    assert entries_list_window.claim_window.isHidden() is True
+    assert entries_list_window.user_data_window.isHidden() is False  # user data window is shown and displays user data
+    assert entries_list_window.claim_window.isHidden() is True  # claim window is hidden
+    assert entries_list_window.entry_data_window.isHidden() is False  # entry data window is shown and displays entry data
+    assert entries_list_window.user_data_window.user_record == [('jsantore@bridgew.edu', 'John', 'Santore',
+                                                                 'Professor', 'Computer Science')]
     assert entries_list_window.user_data_window.email.text() == 'jsantore@bridgew.edu'
     assert entries_list_window.user_data_window.first_name.text() == 'John'
     assert entries_list_window.user_data_window.last_name.text() == 'Santore'
     assert entries_list_window.user_data_window.title.text() == 'Professor'
     assert entries_list_window.user_data_window.department.text() == 'Computer Science'
-    # os.remove('test_db.sqlite')
+    os.remove('test_db.sqlite')

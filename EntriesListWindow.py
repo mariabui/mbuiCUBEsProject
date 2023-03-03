@@ -39,7 +39,7 @@ class EntriesListWindow(QWidget):
             list_item_text = f'{db_entry[0]}\t{db_entry[2]}\t{db_entry[3]}\t{db_entry[5]}'
             list_item = QListWidgetItem(list_item_text, listview=self.list_view)
             if self.entry_is_claimed(db_entry):
-                list_item.setForeground(QColor('red'))
+                list_item.setForeground(QColor('darkRed'))
 
     def get_complete_entry_record(self, db_entry_id: str):
         for db_entry in self.db_entries:
@@ -57,7 +57,8 @@ class EntriesListWindow(QWidget):
         self.show_claim_or_user_window()
 
     def entry_is_claimed(self, db_entry: tuple):
-        self.claim_record = get_claim_record_from_db(self.db_filename, db_entry[0])
+        self.claim_record = get_claim_record_from_db(self.db_filename, db_entry)
+        print(f'claim record: {self.claim_record}')
         if len(self.claim_record) == 0:
             return False
         else:

@@ -26,22 +26,10 @@ class ClaimWindow(QWidget):
         instructions.move(95, 10)
         self.email = self.generate_field('Email *', 50, 30, 50, 45)
         self.submit_email_button = QPushButton('Submit', self)
-        self.submit_email_button.clicked.connect(self.show_lines_or_fields)
+        self.submit_email_button.clicked.connect(self.show_fields)
         self.submit_email_button.resize(self.submit_email_button.sizeHint())
         self.submit_email_button.move(170, 265)
         self.show()
-
-    def generate_line(self, field: int, label_text: str, label_x: int, label_y: int, line_x: int, line_y: int, width=None):
-        label = QLabel(label_text, self)
-        label.move(label_x, label_y)
-        line = QLineEdit(self.user_record[0][field], self)
-        line.move(line_x, line_y)
-        if width:
-            line.setFixedWidth(width)
-        line.setReadOnly(True)
-        label.show()
-        line.show()
-        return line
 
     def generate_field(self, label_text: str, label_x: int, label_y: int, field_x: int, field_y: int, width=None):
         label = QLabel(label_text, self)
@@ -62,12 +50,16 @@ class ClaimWindow(QWidget):
         else:
             return True
 
-    def show_lines_or_fields(self):
+    def show_fields(self):
         print('user clicked submit email')
         self.submit_email_button.hide()
         name_label = QLabel('Name *', self)
         name_label.move(50, 75)
         name_label.show()
+        self.first_name = self.generate_field('First', 50, 110, 50, 90)
+        self.last_name = self.generate_field('Last', 175, 110, 175, 90)
+        self.title = self.generate_field('Title *', 50, 135, 50, 150)
+        self.department = self.generate_field('Department', 50, 180, 50, 195)
         self.claim_button = QPushButton('Claim', self)
         self.claim_button.clicked.connect(self.claim)
         self.claim_button.resize(self.claim_button.sizeHint())
@@ -75,17 +67,13 @@ class ClaimWindow(QWidget):
         self.claim_button.show()
         if self.user_exists():
             print('user exists, autofill user data')
-            self.email.setReadOnly(True)
-            self.first_name = self.generate_line(1, 'First', 50, 110, 50, 90)
-            self.last_name = self.generate_line(2, 'Last', 175, 110, 175, 90)
-            self.title = self.generate_line(3, 'Title *', 50, 135, 50, 150, 250)
-            self.department = self.generate_line(4, 'Department *', 50, 180, 50, 195)
+            self.email.setText(self.user_record[0][0])
+            self.first_name.setText(self.user_record[0][1])
+            self.last_name.setText(self.user_record[0][2])
+            self.title.setText(self.user_record[0][3])
+            self.department.setText(self.user_record[0][4])
         else:
             print('user does not exist')
-            self.first_name = self.generate_field('First', 50, 110, 50, 90)
-            self.last_name = self.generate_field('Last', 175, 110, 175, 90)
-            self.title = self.generate_field('Title *', 50, 135, 50, 150)
-            self.department = self.generate_field('Department', 50, 180, 50, 195)
 
     def save_user_to_db(self):
         connection, cursor = open_db(self.db_filename)
@@ -108,13 +96,13 @@ class ClaimWindow(QWidget):
             print('saved user to db')
             self.save_claim_to_db()
             print('saved claim to db')
-            self.email.setReadOnly(True)
-            self.first_name.setReadOnly(True)
-            self.last_name.setReadOnly(True)
-            self.title.setReadOnly(True)
-            self.department.setReadOnly(True)
+        self.email.setReadOnly(True)
+        self.first_name.setReadOnly(True)
+        self.last_name.setReadOnly(True)
+        self.title.setReadOnly(True)
+        self.department.setReadOnly(True)
         self.claim_button.setDisabled(True)
-        self.current.setForeground(QColor('red'))
+        self.current.setForeground(QColor('darkRed'))
         success_message = QLabel('Successfully claimed!', self)
         success_message.move(135, 235)
         success_message.show()

@@ -29,7 +29,7 @@ class UserDataWindow(QWidget):
         self.show()
 
     def entry_is_claimed(self, db_entry: tuple):
-        self.claim_record = get_claim_record_from_db(self.db_filename, db_entry[0])
+        self.claim_record = get_claim_record_from_db(self.db_filename, db_entry)
         if len(self.claim_record) == 0:
             return False
         else:
@@ -37,7 +37,7 @@ class UserDataWindow(QWidget):
 
     def generate_line(self, field: int, label_text: str, label_x: int, label_y: int, line_x: int, line_y: int, width=None):
         if self.entry_is_claimed(self.db_entry):
-            self.user_record = get_user_record_from_db(self.db_filename, self.claim_record[0][1])
+            self.user_record = get_user_record_from_db(self.db_filename, self.claim_record[0][2])
             label = QLabel(label_text, self)
             label.move(label_x, label_y)
             line = QLineEdit(self.user_record[0][field], self)
