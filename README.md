@@ -15,27 +15,31 @@ The database contains an entries table that stores the entries data. The entries
 ## GUI Layout
 The GUI consists of 5 windows:
 1. ```Update or Run```
-   * Opens on program startup.
+   * Opens on program execution.
    * Prompts the user to choose to either update the data in the database or run the data visualization.
    * GUI remains running after updating the data in the database.
 2. ```Entries List```
    * Located on the left of the screen.
    * Displays the entries in a list. If the user has chosen to update the data in the database, an updated list of entries is displayed.
    * Shows a preview of each entry by displaying its associated id, first name, last name, and organization name.
-   * Claimed entries have red text color.
+   * Claimed entries have a dark red text color.
    * Has a *Quit* button in the bottom right corner.
+   * Selects Entry 1 by default.
 3. ```Entry Data```
    * Located in the center of the screen.
-   * Displays the complete entry data of the selected entry from the list. The first entry in the list is selected and displayed by default.
+   * Displays the complete entry data of the selected entry from the list. 
    * Editing is disabled for the data fields.
+   * Displays Entry 1's data by default.
 4. ```Claim```
    * Located on the right of the screen.
    * Prompts the user to provide their email, first name, last name, title, and department to claim the selected entry.
    * Shows when an unclaimed entry is selected.
+   * Displays by default if Entry 1 has been claimed.
 5. ```User Data```
    * Located on the right of the screen.
    * Displays the selected entry's claimer's email, first name, last name, title, and department that they have provided.
    * Shows when a claimed entry is selected.
+   * Displays Entry 1's claimer by default if Entry 1 has been claimed.
 
 ## Detailed Manual Test Plan
 [Click here for a detailed manual test plan (with pictures) to explain what should happen when the graphical elements are invoked.](https://docs.google.com/document/d/1zk0iSlQMeo-QUfFKDz57KuuU5-b7ajrnxbD603LRIis/edit?usp=sharing)
