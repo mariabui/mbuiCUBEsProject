@@ -1,14 +1,14 @@
 from PySide6.QtWidgets import QWidget, QLabel, QPushButton
-from api_handler import get_entries
-from db_handler import open_db, close_db, process_entries_data, save_entries_to_db, get_entry_records_from_db
 from EntriesListWindow import EntriesListWindow
+from api_handler import get_entries
+from db_handler import open_db, close_db, process_entries_data, save_entries_to_db, get_entries_records_from_db
 
 
 class UpdateOrRunWindow(QWidget):
     def __init__(self, db_filename: str):
         super().__init__()
         self.db_filename = db_filename
-        self.db_entries = get_entry_records_from_db(self.db_filename)
+        self.entries_records = get_entries_records_from_db(self.db_filename)
         self.entries_list_window = None
         self.setup()
 
@@ -29,11 +29,11 @@ class UpdateOrRunWindow(QWidget):
     def update_db(self):
         print('user clicked update db button')
         entries = get_entries('https://mbui.wufoo.com/api/v3/forms/cubes-project-proposal-submission/entries/json')
-        connection, cursor = open_db(self.db_filename)
         entries_data = process_entries_data(entries)
+        connection, cursor = open_db(self.db_filename)
         save_entries_to_db(entries_data, cursor)
         close_db(connection, cursor)
-        self.db_entries = get_entry_records_from_db(self.db_filename)
+        self.entries_records = get_entries_records_from_db(self.db_filename)
         self.show_entries_list_window()
 
     def run(self):
@@ -41,6 +41,6 @@ class UpdateOrRunWindow(QWidget):
         self.show_entries_list_window()
 
     def show_entries_list_window(self):
-        self.entries_list_window = EntriesListWindow(self.db_filename, self.db_entries)
+        self.entries_list_window = EntriesListWindow(self.db_filename, self.entries_records)
         self.entries_list_window.show()
         self.hide()

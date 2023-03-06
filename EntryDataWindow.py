@@ -3,9 +3,9 @@ from PySide6.QtCore import Qt
 
 
 class EntryDataWindow(QWidget):
-    def __init__(self, db_entry: tuple):
+    def __init__(self, entry_record: tuple):
         super().__init__()
-        self.db_entry = db_entry
+        self.entry_record = entry_record
         self.prefix = None
         self.first_name = None
         self.last_name = None
@@ -30,20 +30,20 @@ class EntryDataWindow(QWidget):
         self.setup()
 
     def setup(self):
-        self.setWindowTitle(f'Entry {self.db_entry[0]}')
+        self.setWindowTitle(f'Entry {self.entry_record[0]}')
         self.setGeometry(500, 0, 450, 800)
 
-        self.prefix = self.generate_line(1, 'Prefix', 50, 30, 50, 45)
+        self.prefix = self.generate_field(1, 'Prefix', 50, 30, 50, 45)
 
         name_label = QLabel('Name *', self)
         name_label.move(50, 75)
-        self.first_name = self.generate_line(2, 'First', 50, 110, 50, 90)
-        self.last_name = self.generate_line(3, 'Last', 190, 110, 190, 90)
-        self.title = self.generate_line(4, 'Title *', 50, 135, 50, 150, 265)
-        self.organization_name = self.generate_line(5, 'Organization Name *', 50, 180, 50, 195, 265)
-        self.email = self.generate_line(6, 'Email *', 50, 225, 50, 240, 265)
-        self.organization_website = self.generate_line(7, 'Organization Website', 50, 270, 50, 285, 265)
-        self.phone_number = self.generate_line(8, 'Phone Number', 50, 315, 50, 330)
+        self.first_name = self.generate_field(2, 'First', 50, 110, 50, 90)
+        self.last_name = self.generate_field(3, 'Last', 190, 110, 190, 90)
+        self.title = self.generate_field(4, 'Title *', 50, 135, 50, 150, 265)
+        self.organization_name = self.generate_field(5, 'Organization Name *', 50, 180, 50, 195, 265)
+        self.email = self.generate_field(6, 'Email *', 50, 225, 50, 240, 265)
+        self.organization_website = self.generate_field(7, 'Organization Website', 50, 270, 50, 285, 265)
+        self.phone_number = self.generate_field(8, 'Phone Number', 50, 315, 50, 330)
 
         collab_label = QLabel('Which of the following collaborative opportunities would\n'
                               'you be interested in? (check all that apply)', self)
@@ -64,17 +64,17 @@ class EntryDataWindow(QWidget):
         self.summer_2023 = self.generate_checkbox(19, 'Summer 2023 (June 2023- August 2023)', 50, 620)
         self.other_time_period = self.generate_checkbox(20, 'Other', 50, 640)
 
-        self.organization_name_usage = self.generate_line(21, 'If you participate in a CUBEs project, do we have your\n'
-                                                              'permission to use your organizations name upon\n'
-                                                              'completion, when listing completed projects?',
-                                                          50, 665, 50, 715, 265)
+        self.organization_name_usage = self.generate_field(21, 'If you participate in a CUBEs project, do we have your\n'
+                                                               'permission to use your organizations name upon\n'
+                                                               'completion, when listing completed projects?',
+                                                           50, 665, 50, 715, 265)
         self.show()
 
-    def generate_line(self, field: int, label_text: str, label_x: int, label_y: int, line_x: int, line_y: int, width=None):
+    def generate_field(self, field: int, label_text: str, label_x: int, label_y: int, field_x: int, field_y: int, width=None):
         label = QLabel(label_text, self)
         label.move(label_x, label_y)
-        line = QLineEdit('', self) if not self.db_entry[field] else QLineEdit(self.db_entry[field], self)
-        line.move(line_x, line_y)
+        line = QLineEdit('', self) if not self.entry_record[field] else QLineEdit(self.entry_record[field], self)
+        line.move(field_x, field_y)
         if width:
             line.setFixedWidth(width)
         line.setReadOnly(True)
@@ -82,7 +82,7 @@ class EntryDataWindow(QWidget):
 
     def generate_checkbox(self, field: int, checkbox_text: str, checkbox_x: int, checkbox_y: int):
         checkbox = QCheckBox(checkbox_text, self)
-        checkbox.setChecked(True) if self.db_entry[field] == 'Y' else checkbox.setChecked(False)
+        checkbox.setChecked(True) if self.entry_record[field] == 'Y' else checkbox.setChecked(False)
         checkbox.move(checkbox_x, checkbox_y)
         checkbox.setAttribute(Qt.WA_TransparentForMouseEvents)
         checkbox.setFocusPolicy(Qt.NoFocus)

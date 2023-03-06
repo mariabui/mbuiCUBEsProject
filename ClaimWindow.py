@@ -4,31 +4,40 @@ from db_handler import open_db, close_db, get_user_record_from_db, save_user_to_
 
 
 class ClaimWindow(QWidget):
-    def __init__(self, db_filename: str, db_entry: tuple, current: QListWidgetItem):
+    def __init__(self, db_filename: str, entry_record: tuple, current: QListWidgetItem):
         super().__init__()
         self.db_filename = db_filename
-        self.db_entry = db_entry
-        self.current = current
-        self.email = None
+        self.entry_record = entry_record
+        self.selected_list_item = current
+        self.bsu_email = None
         self.first_name = None
         self.last_name = None
         self.title = None
         self.department = None
-        self.submit_email_button = None
+        self.bsu_email_label = None
+        self.first_name_label = None
+        self.last_name_label = None
+        self.title_label = None
+        self.department_label = None
+        self.submit_button = None
         self.claim_button = None
         self.user_record = None
         self.setup()
 
     def setup(self):
-        self.setWindowTitle(f'Claim Entry {self.db_entry[0]}')
+        self.setWindowTitle(f'Claim Entry {self.entry_record[0]}')
         self.setGeometry(950, 0, 400, 300)
-        instructions = QLabel('Please fill out the information below. ', self)
+        instructions = QLabel('Please fill out the information below:', self)
         instructions.move(95, 10)
-        self.email = self.generate_field('Email *', 50, 30, 50, 45, 265)
-        self.submit_email_button = QPushButton('Submit', self)
-        self.submit_email_button.clicked.connect(self.show_fields)
-        self.submit_email_button.resize(self.submit_email_button.sizeHint())
-        self.submit_email_button.move(170, 265)
+        self.bsu_email, self.bsu_email_label = self.generate_field('Email *', 50, 30, 50, 45, 265)
+        self.first_name, self.first_name_label = self.generate_field('First', 50, 110, 50, 90)
+        self.last_name, self.last_name_label = self.generate_field('Last', 190, 110, 190, 90)
+        self.title, self.title_label = self.generate_field('Title *', 50, 135, 50, 150, 265)
+        self.department, self.department_label = self.generate_field('Department *', 50, 180, 50, 195, 265)
+        self.submit_button = QPushButton('Submit', self)
+        self.submit_button.clicked.connect(self.show_fields_and_claim_button)
+        self.submit_button.resize(self.submit_button.sizeHint())
+        self.submit_button.move(170, 265)
         self.show()
 
     def generate_field(self, label_text: str, label_x: int, label_y: int, field_x: int, field_y: int, width=None):
@@ -38,28 +47,36 @@ class ClaimWindow(QWidget):
         field.move(field_x, field_y)
         if width:
             field.setFixedWidth(width)
-        label.show()
-        field.show()
-        return field
+        if label_text == 'Email *':
+            label.show()
+            field.show()
+        else:
+            label.hide()
+            field.hide()
+        return field, label
 
     def user_exists(self):
-        self.user_record = get_user_record_from_db(self.db_filename, self.email.text())
+        self.user_record = get_user_record_from_db(self.db_filename, self.bsu_email.text())
         print(f'user record: {self.user_record}')
         if len(self.user_record) == 0:
             return False
         else:
             return True
 
-    def show_fields(self):
+    def show_fields_and_claim_button(self):
         print('user clicked submit email')
-        self.submit_email_button.hide()
+        self.submit_button.hide()
         name_label = QLabel('Name *', self)
         name_label.move(50, 75)
         name_label.show()
-        self.first_name = self.generate_field('First', 50, 110, 50, 90)
-        self.last_name = self.generate_field('Last', 190, 110, 190, 90)
-        self.title = self.generate_field('Title *', 50, 135, 50, 150, 265)
-        self.department = self.generate_field('Department', 50, 180, 50, 195, 265)
+        self.first_name.show()
+        self.first_name_label.show()
+        self.last_name.show()
+        self.last_name_label.show()
+        self.title.show()
+        self.title_label.show()
+        self.department.show()
+        self.department_label.show()
         self.claim_button = QPushButton('Claim', self)
         self.claim_button.clicked.connect(self.claim)
         self.claim_button.resize(self.claim_button.sizeHint())
@@ -67,42 +84,35 @@ class ClaimWindow(QWidget):
         self.claim_button.show()
         if self.user_exists():
             print('user exists, autofill user data')
-            self.email.setText(self.user_record[0][0])
-            self.first_name.setText(self.user_record[0][1])
-            self.last_name.setText(self.user_record[0][2])
-            self.title.setText(self.user_record[0][3])
-            self.department.setText(self.user_record[0][4])
+            self.autofill_user_data()
         else:
             print('user does not exist')
 
-    def save_user_to_db(self):
-        connection, cursor = open_db(self.db_filename)
-        save_user_to_db(tuple([self.email.text(), self.first_name.text(), self.last_name.text(),
-                               self.title.text(), self.department.text()]), cursor)
-        close_db(connection, cursor)
+    def autofill_user_data(self):
+        self.bsu_email.setText(self.user_record[0][0])
+        self.first_name.setText(self.user_record[0][1])
+        self.last_name.setText(self.user_record[0][2])
+        self.title.setText(self.user_record[0][3])
+        self.department.setText(self.user_record[0][4])
 
-    def save_claim_to_db(self):
+    def save_user_and_claim_to_db(self):
         connection, cursor = open_db(self.db_filename)
-        save_claim_to_db(tuple([self.db_entry[0], self.email.text()]), cursor)
+        save_user_to_db(tuple([self.bsu_email.text(), self.first_name.text(), self.last_name.text(),
+                               self.title.text(), self.department.text()]), cursor)
+        save_claim_to_db(tuple([self.entry_record[0], self.bsu_email.text()]), cursor)
         close_db(connection, cursor)
 
     def claim(self):
         print('user clicked claim button')
-        if self.user_exists():
-            self.save_claim_to_db()
-            print('saved claim to db')
-        else:
-            self.save_user_to_db()
-            print('saved user to db')
-            self.save_claim_to_db()
-            print('saved claim to db')
-        self.email.setReadOnly(True)
+        self.save_user_and_claim_to_db()
+        print('saved user and claim to db')
+        self.bsu_email.setReadOnly(True)
         self.first_name.setReadOnly(True)
         self.last_name.setReadOnly(True)
         self.title.setReadOnly(True)
         self.department.setReadOnly(True)
         self.claim_button.setDisabled(True)
-        self.current.setForeground(QColor('darkRed'))
+        self.selected_list_item.setForeground(QColor('darkRed'))
         success_message = QLabel('Successfully claimed!', self)
         success_message.move(135, 235)
         success_message.show()

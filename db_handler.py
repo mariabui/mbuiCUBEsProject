@@ -57,7 +57,7 @@ def create_entries_table(cursor: sqlite3.Cursor):
 def create_users_table(cursor: sqlite3.Cursor):
     try:
         cursor.execute('''CREATE TABLE IF NOT EXISTS users(
-                       email TEXT PRIMARY KEY,
+                       bsu_email TEXT PRIMARY KEY,
                        first_name TEXT NOT NULL,
                        last_name TEXT NOT NULL,
                        title TEXT NOT NULL,
@@ -71,11 +71,11 @@ def create_claims_table(cursor: sqlite3.Cursor):
     try:
         cursor.execute('''CREATE TABLE IF NOT EXISTS claims(
                        claim_id INTEGER PRIMARY KEY,
-                       entry_id INTEGER,
-                       email TEXT,
+                       entry_id INTEGER NOT NULL,
+                       bsu_email TEXT NOT NULL,
                        FOREIGN KEY (entry_id) REFERENCES entries (entry_id)
                        ON DELETE CASCADE ON UPDATE NO ACTION,
-                       FOREIGN KEY (email) REFERENCES users (email)
+                       FOREIGN KEY (bsu_email) REFERENCES users (bsu_email)
                        ON DELETE CASCADE ON UPDATE NO ACTION);''')
     except sqlite3.Error as error:
         print(f'Failed to create claims table, {error}')
@@ -122,31 +122,31 @@ def save_user_to_db(user_data: tuple, cursor: sqlite3.Cursor):
 
 def save_claim_to_db(claim_data: tuple, cursor: sqlite3.Cursor):
     try:
-        cursor.execute('''INSERT OR IGNORE INTO claims (entry_id, email) VALUES(?, ?);''', claim_data)
+        cursor.execute('''INSERT OR IGNORE INTO claims (entry_id, bsu_email) VALUES(?, ?);''', claim_data)
     except sqlite3.Error as error:
         print(f'Failed to save claim to database, {error}')
         sys.exit(-1)
 
 
-def get_entry_records_from_db(db_filename: str) -> list[tuple]:
+def get_entries_records_from_db(db_filename: str) -> list[tuple]:
     connection, cursor = open_db(db_filename)
     cursor.execute('''SELECT * FROM entries;''')
-    db_entries = cursor.fetchall()
+    entries_records = cursor.fetchall()
     close_db(connection, cursor)
-    return db_entries
+    return entries_records
 
 
-def get_user_record_from_db(db_filename: str, email: str):
+def get_user_record_from_db(db_filename: str, bsu_email: str):
     connection, cursor = open_db(db_filename)
-    cursor.execute('''SELECT * FROM users WHERE email = ?;''', [email])
+    cursor.execute('''SELECT * FROM users WHERE bsu_email = ?;''', [bsu_email])
     user_record = cursor.fetchall()
     close_db(connection, cursor)
     return user_record
 
 
-def get_claim_record_from_db(db_filename: str, db_entry: tuple):
+def get_claim_record_from_db(db_filename: str, entry_id: int):
     connection, cursor = open_db(db_filename)
-    cursor.execute('''SELECT * FROM claims WHERE entry_id = ?;''', [db_entry[0]])
+    cursor.execute('''SELECT * FROM claims WHERE entry_id = ?;''', [entry_id])
     claim_record = cursor.fetchall()
     close_db(connection, cursor)
     return claim_record

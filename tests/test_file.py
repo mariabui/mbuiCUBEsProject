@@ -1,10 +1,10 @@
 import os
+from PySide6.QtWidgets import QListWidgetItem
+from EntriesListWindow import EntriesListWindow
+from ClaimWindow import ClaimWindow
 from api_handler import get_entries
 from db_handler import set_up_db, open_db, close_db, create_entries_table, save_entries_to_db,\
-    get_entry_records_from_db, get_user_record_from_db
-from EntriesListWindow import EntriesListWindow
-from PySide6.QtWidgets import QListWidgetItem
-from ClaimWindow import ClaimWindow
+    get_entries_records_from_db, get_user_record_from_db
 
 
 def test_get_data():
@@ -13,18 +13,17 @@ def test_get_data():
 
 
 def test_table_creation():
-    connection, cursor = open_db('test_db.sqlite')  # creates a new empty db and runs entries table creation function
+    connection, cursor = open_db('test_db.sqlite')
     create_entries_table(cursor)
-    # verify that the entries table is created properly in the db
     cursor.execute('''SELECT COUNT(*) FROM sqlite_master;''')
     table_count = cursor.fetchone()[0]
-    assert table_count == 1  # there is a table in the db
+    assert table_count == 1
     cursor.execute('''SELECT name FROM sqlite_master WHERE type = 'table';''')
     table_name = cursor.fetchall()[0][0]
-    assert table_name == 'entries'  # the table's name is 'entries'
+    assert table_name == 'entries'
     cursor.execute('''SELECT COUNT(*) FROM sqlite_master WHERE name = 'entries';''')
     entries_table_count = cursor.fetchone()[0]
-    assert entries_table_count == 1  # there is an entries table in the db
+    assert entries_table_count == 1
     cursor.execute('''SELECT COUNT(*) FROM sqlite_master WHERE type = 'table' AND name = 'entries';''')
     assert cursor.fetchone()[0] == 1
     cursor.execute('''SELECT * FROM sqlite_master WHERE tbl_name = 'entries' AND type = 'table';''')
@@ -41,15 +40,14 @@ def test_save_data_to_db():
     save_entries_to_db(test_entry_data, cursor)
     close_db(connection, cursor)
     connection, cursor = open_db('test_db.sqlite')
-    # verify that the db contains the test entry that was put there
     cursor.execute('''SELECT COUNT(*) FROM entries;''')
     entries_count = cursor.fetchone()[0]
-    assert entries_count == 1  # there is an entry saved in the entries table
+    assert entries_count == 1
     cursor.execute('''SELECT * FROM entries;''')
     assert len(cursor.fetchall()) == 1
     cursor.execute('''SELECT * FROM entries WHERE entry_id = 15;''')
     saved_entry = cursor.fetchall()
-    assert saved_entry[0] == test_entry_data[0]  # the test entry is saved to the db
+    assert saved_entry[0] == test_entry_data[0]
     cursor.execute('''SELECT COUNT(*) FROM entries WHERE entry_id = 15;''')
     assert cursor.fetchone()[0] == 1
     cursor.execute('''SELECT first_name FROM entries;''')
@@ -61,11 +59,15 @@ def test_entry_data_population(qtbot):
     db_filename = 'test_db.sqlite'
     connection, cursor = set_up_db(db_filename)
     close_db(connection, cursor)
-    db_entries = get_entry_records_from_db(db_filename)
-    entries_list_window = EntriesListWindow(db_filename, db_entries)
+    entries_records = get_entries_records_from_db(db_filename)
+    entries_list_window = EntriesListWindow(db_filename, entries_records)
     qtbot.addWidget(entries_list_window)
     current = QListWidgetItem('15\tChip\tSkylark\tNickelodeon', listview=entries_list_window.list_view)
     entries_list_window.list_item_selected(current, current)
+    assert entries_list_window.entry_record == (
+        15, None, 'Chip', 'Skylark', 'Singer', 'Nickelodeon', 'cskylark@nick.com', None, None, 'N', 'Y', 'Y', 'Y', 'N',
+        'N', 'N', 'N', 'N', 'Y', 'Y', 'N', 'Yes', '2023-02-02 17:41:30', 'public'
+    )
     assert entries_list_window.entry_data_window.first_name.text() == 'Chip'
     assert entries_list_window.entry_data_window.last_name.text() == 'Skylark'
     assert entries_list_window.entry_data_window.title.text() == 'Singer'
@@ -80,15 +82,15 @@ def test_entry_data_population(qtbot):
 def test_user_creation(qtbot):
     """
     User creation functionality is implemented in the Claim window.
-    When a new user claims an entry, their user data is saved to the users table in the database.
+    When a user claims an entry, their user data is saved to the users table in the database.
     """
     db_filename = 'test_db.sqlite'
-    db_entries = get_entry_records_from_db(db_filename)
+    entries_records = get_entries_records_from_db(db_filename)
     current = QListWidgetItem('15\tChip\tSkylark\tNickelodeon')
-    claim_window = ClaimWindow(db_filename, db_entries[0], current)
+    claim_window = ClaimWindow(db_filename, entries_records[0], current)
     qtbot.addWidget(claim_window)
-    claim_window.email.setText('jsantore@bridgew.edu')
-    claim_window.show_fields()  # this method is called when the user submits their email
+    claim_window.bsu_email.setText('jsantore@bridgew.edu')
+    claim_window.show_fields_and_claim_button()  # this method is called when the user submits their bsu email
     assert claim_window.user_exists() is False
     assert claim_window.user_record == []
     # the user fills in their own data
@@ -96,10 +98,10 @@ def test_user_creation(qtbot):
     claim_window.last_name.setText('Santore')
     claim_window.title.setText('Professor')
     claim_window.department.setText('Computer Science')
-    claim_window.claim()  # this method saves the new user data into the db along with their claim
+    claim_window.claim()  # this method saves the user and claim data to the db when the user submits their claim
     assert claim_window.user_exists() is True
     assert claim_window.user_record == [('jsantore@bridgew.edu', 'John', 'Santore', 'Professor', 'Computer Science')]
-    user_record = get_user_record_from_db(db_filename, claim_window.email.text())
+    user_record = get_user_record_from_db(db_filename, claim_window.bsu_email.text())
     assert len(user_record) == 1
     assert user_record[0][0] == 'jsantore@bridgew.edu'
     assert user_record[0][1] == 'John'
@@ -110,19 +112,23 @@ def test_user_creation(qtbot):
 
 def test_existing_user_data_population(qtbot):
     """
-    When an existing user enters their email to submit a claim, the claim window autofills their user data.
+    When an existing user submits their bsu email, their user data is autofilled in the claim window.
     """
     db_filename = 'test_db.sqlite'
-    db_entries = get_entry_records_from_db(db_filename)
+    entries_records = get_entries_records_from_db(db_filename)
     current = QListWidgetItem('15\tChip\tSkylark\tNickelodeon')
-    claim_window = ClaimWindow(db_filename, db_entries[0], current)
+    claim_window = ClaimWindow(db_filename, entries_records[0], current)
     qtbot.addWidget(claim_window)
-    claim_window.email.setText('jsantore@bridgew.edu')
-    claim_window.show_fields()  # existing user submits their email
+    claim_window.bsu_email.setText('jsantore@bridgew.edu')
+    assert claim_window.bsu_email.text() == 'jsantore@bridgew.edu'
+    assert claim_window.first_name.text() == ''
+    assert claim_window.last_name.text() == ''
+    assert claim_window.title.text() == ''
+    assert claim_window.department.text() == ''
+    claim_window.show_fields_and_claim_button()  # existing user submits their bsu email
     assert claim_window.user_exists() is True
     assert claim_window.user_record == [('jsantore@bridgew.edu', 'John', 'Santore', 'Professor', 'Computer Science')]
-    # fields are autofilled with the ir existing user's data
-    assert claim_window.email.text() == 'jsantore@bridgew.edu'
+    # fields are autofilled with the existing user's data
     assert claim_window.first_name.text() == 'John'
     assert claim_window.last_name.text() == 'Santore'
     assert claim_window.title.text() == 'Professor'
@@ -131,23 +137,24 @@ def test_existing_user_data_population(qtbot):
 
 def test_claimer_data_population(qtbot):
     """
-    When a claimed entry (project) from the list is selected, both the full CUBEs project data and
+    When a claimed entry is selected from the list, both the full CUBEs project data and
     the information about the faculty/user who claimed it are displayed.
-    A previous test ('test_entry_data_population') verifies that the selected CUBEs project data is displayed.
+    A previous test, 'test_entry_data_population', verifies that the full CUBEs project data is displayed when selected.
     """
     db_filename = 'test_db.sqlite'
-    db_entries = get_entry_records_from_db(db_filename)
-    entries_list_window = EntriesListWindow(db_filename, db_entries)
+    entries_records = get_entries_records_from_db(db_filename)
+    entries_list_window = EntriesListWindow(db_filename, entries_records)
     qtbot.addWidget(entries_list_window)
     current = QListWidgetItem('15\tChip\tSkylark\tNickelodeon', listview=entries_list_window.list_view)
-    entries_list_window.list_item_selected(current, current)  # a claimed project is selected
-    assert entries_list_window.entry_is_claimed(db_entries[0]) is True
+    entries_list_window.list_item_selected(current, current)  # a claimed entry is selected
+    assert entries_list_window.entry_is_claimed(entries_records[0]) is True
+    assert entries_list_window.claim_record == [(1, 15, 'jsantore@bridgew.edu')]
+    assert entries_list_window.entry_data_window.isHidden() is False  # entry data window is shown and displays entry data
     assert entries_list_window.user_data_window.isHidden() is False  # user data window is shown and displays user data
     assert entries_list_window.claim_window.isHidden() is True  # claim window is hidden
-    assert entries_list_window.entry_data_window.isHidden() is False  # entry data window is shown and displays entry data
     assert entries_list_window.user_data_window.user_record == [('jsantore@bridgew.edu', 'John', 'Santore',
                                                                  'Professor', 'Computer Science')]
-    assert entries_list_window.user_data_window.email.text() == 'jsantore@bridgew.edu'
+    assert entries_list_window.user_data_window.bsu_email.text() == 'jsantore@bridgew.edu'
     assert entries_list_window.user_data_window.first_name.text() == 'John'
     assert entries_list_window.user_data_window.last_name.text() == 'Santore'
     assert entries_list_window.user_data_window.title.text() == 'Professor'
