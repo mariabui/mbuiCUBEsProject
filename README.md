@@ -16,7 +16,7 @@ The database contains an entries table that stores the entries data. The entries
 The GUI consists of 5 windows:
 1. ```Update or Run```
    * Opens on program launch.
-   * Prompts the user to choose to either update the data in the database or run the data visualization.
+   * Prompts the user to choose to either update the data in the database or run the data visualization. The user should choose to update the data in the database at least once before running the data visualization.
    * Closes after the user chooses an option. GUI remains running after updating the data in the database.
 2. ```Entries List```
    * Located on the left of the screen.
