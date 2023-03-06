@@ -18,7 +18,7 @@ class UserDataWindow(QWidget):
 
     def setup(self):
         self.setWindowTitle(f'Entry {self.entry_record[0]} Claimed By')
-        self.setGeometry(950, 0, 400, 260)
+        self.setGeometry(950, 0, 400, 300)
         self.bsu_email = self.generate_field(0, 'Email *', 50, 30, 50, 45, 265)
         name_label = QLabel('Name *', self)
         name_label.move(50, 75)
