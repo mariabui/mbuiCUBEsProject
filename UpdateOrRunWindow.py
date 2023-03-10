@@ -27,7 +27,6 @@ class UpdateOrRunWindow(QWidget):
         self.show()
 
     def update_db(self):
-        print('user clicked update db button')
         entries = get_entries('https://mbui.wufoo.com/api/v3/forms/cubes-project-proposal-submission/entries/json')
         entries_data = process_entries_data(entries)
         connection, cursor = open_db(self.db_filename)
@@ -37,7 +36,6 @@ class UpdateOrRunWindow(QWidget):
         self.show_entries_list_window()
 
     def run(self):
-        print('user clicked run visual button')
         self.show_entries_list_window()
 
     def show_entries_list_window(self):

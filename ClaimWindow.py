@@ -10,14 +10,14 @@ class ClaimWindow(QWidget):
         self.entry_record = entry_record
         self.selected_list_item = current
         self.bsu_email = None
-        self.first_name = None
-        self.last_name = None
-        self.title = None
-        self.department = None
         self.bsu_email_label = None
+        self.first_name = None
         self.first_name_label = None
+        self.last_name = None
         self.last_name_label = None
+        self.title = None
         self.title_label = None
+        self.department = None
         self.department_label = None
         self.submit_button = None
         self.claim_button = None
@@ -57,14 +57,12 @@ class ClaimWindow(QWidget):
 
     def user_exists(self):
         self.user_record = get_user_record_from_db(self.db_filename, self.bsu_email.text())
-        print(f'user record: {self.user_record}')
         if len(self.user_record) == 0:
             return False
         else:
             return True
 
     def show_fields_and_claim_button(self):
-        print('user clicked submit email')
         self.submit_button.hide()
         name_label = QLabel('Name *', self)
         name_label.move(50, 75)
@@ -83,10 +81,7 @@ class ClaimWindow(QWidget):
         self.claim_button.move(170, 265)
         self.claim_button.show()
         if self.user_exists():
-            print('user exists, autofill user data')
             self.autofill_user_data()
-        else:
-            print('user does not exist')
 
     def autofill_user_data(self):
         self.bsu_email.setText(self.user_record[0][0])
@@ -103,9 +98,7 @@ class ClaimWindow(QWidget):
         close_db(connection, cursor)
 
     def claim(self):
-        print('user clicked claim button')
         self.save_user_and_claim_to_db()
-        print('saved user and claim to db')
         self.bsu_email.setReadOnly(True)
         self.first_name.setReadOnly(True)
         self.last_name.setReadOnly(True)

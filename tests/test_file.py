@@ -82,7 +82,7 @@ def test_entry_data_population(qtbot):
 def test_user_creation(qtbot):
     """
     User creation functionality is implemented in the Claim window.
-    When a user claims an entry, their user data is saved to the users table in the database.
+    When a user claims an entry, their user and claim data is saved to the users and claims tables in the database, respectively.
     """
     db_filename = 'test_db.sqlite'
     entries_records = get_entries_records_from_db(db_filename)
@@ -93,6 +93,8 @@ def test_user_creation(qtbot):
     claim_window.show_fields_and_claim_button()  # this method is called when the user submits their bsu email
     assert claim_window.user_exists() is False
     assert claim_window.user_record == []
+    user_record = get_user_record_from_db(db_filename, claim_window.bsu_email.text())
+    assert len(user_record) == 0
     # the user fills in their own data
     claim_window.first_name.setText('John')
     claim_window.last_name.setText('Santore')
@@ -112,7 +114,7 @@ def test_user_creation(qtbot):
 
 def test_existing_user_data_population(qtbot):
     """
-    When an existing user submits their bsu email, their user data is autofilled in the claim window.
+    When an existing user submits their bsu email, their user data is autofilled in the Claim window.
     """
     db_filename = 'test_db.sqlite'
     entries_records = get_entries_records_from_db(db_filename)
@@ -139,7 +141,7 @@ def test_claimer_data_population(qtbot):
     """
     When a claimed entry is selected from the list, both the full CUBEs project data and
     the information about the faculty/user who claimed it are displayed.
-    A previous test, 'test_entry_data_population', verifies that the full CUBEs project data is displayed when selected.
+    A previous test, 'test_entry_data_population', verifies that the correct full CUBEs project data is displayed when selected.
     """
     db_filename = 'test_db.sqlite'
     entries_records = get_entries_records_from_db(db_filename)
@@ -149,8 +151,8 @@ def test_claimer_data_population(qtbot):
     entries_list_window.list_item_selected(current, current)  # a claimed entry is selected
     assert entries_list_window.entry_is_claimed(entries_records[0]) is True
     assert entries_list_window.claim_record == [(1, 15, 'jsantore@bridgew.edu')]
-    assert entries_list_window.entry_data_window.isHidden() is False  # entry data window is shown and displays entry data
-    assert entries_list_window.user_data_window.isHidden() is False  # user data window is shown and displays user data
+    assert entries_list_window.entry_data_window.isHidden() is False  # entry data window is shown and displays the entry data
+    assert entries_list_window.user_data_window.isHidden() is False  # user data window is shown and displays the user data
     assert entries_list_window.claim_window.isHidden() is True  # claim window is hidden
     assert entries_list_window.user_data_window.user_record == [('jsantore@bridgew.edu', 'John', 'Santore',
                                                                  'Professor', 'Computer Science')]
@@ -159,4 +161,4 @@ def test_claimer_data_population(qtbot):
     assert entries_list_window.user_data_window.last_name.text() == 'Santore'
     assert entries_list_window.user_data_window.title.text() == 'Professor'
     assert entries_list_window.user_data_window.department.text() == 'Computer Science'
-    os.remove('test_db.sqlite')
+    os.remove('test_db.sqlite')  # removes the test db file

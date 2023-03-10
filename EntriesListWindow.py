@@ -58,7 +58,6 @@ class EntriesListWindow(QWidget):
 
     def entry_is_claimed(self, entry_record: tuple):
         self.claim_record = get_claim_record_from_db(self.db_filename, entry_record[0])
-        print(f'claim record: {self.claim_record}')
         if len(self.claim_record) == 0:
             return False
         else:
@@ -68,10 +67,8 @@ class EntriesListWindow(QWidget):
         self.claim_window = ClaimWindow(self.db_filename, self.entry_record, self.selected_list_item)
         self.user_data_window = UserDataWindow(self.db_filename, self.entry_record)
         if self.entry_is_claimed(self.entry_record):
-            print('entry is claimed')
             self.claim_window.hide()
             self.user_data_window.show()
         else:
-            print('entry not claimed')
             self.claim_window.show()
             self.user_data_window.hide()
