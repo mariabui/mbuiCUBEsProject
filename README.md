@@ -26,7 +26,7 @@ The database consists of 3 tables:
      * department
    * bsu email is the primary key.
 3. ```claims```
-   * Stores the claims data of claimed entries and claimers.
+   * Stores the claims data of claimed entries and their claimers.
    * Consists of 3 columns:
      * claim id
      * entry id (of the claimed entry)
