@@ -82,7 +82,8 @@ def test_entry_data_population(qtbot):
 def test_user_creation(qtbot):
     """
     User creation functionality is implemented in the Claim window.
-    When a user claims an entry, their user and claim data is saved to the users and claims tables in the database, respectively.
+    When a user claims an entry, their user and claim data is saved to the
+    users and claims tables in the database, respectively.
     """
     db_filename = 'test_db.sqlite'
     entries_records = get_entries_records_from_db(db_filename)
