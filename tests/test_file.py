@@ -141,7 +141,8 @@ def test_claimer_data_population(qtbot):
     """
     When a claimed entry is selected from the list, both the full CUBEs project data and
     the information about the faculty/user who claimed it are displayed.
-    A previous test, 'test_entry_data_population', verifies that the correct full CUBEs project data is displayed when selected.
+    A previous test, 'test_entry_data_population',
+    verifies that the correct full CUBEs project data is displayed when selected.
     """
     db_filename = 'test_db.sqlite'
     entries_records = get_entries_records_from_db(db_filename)
