@@ -50,8 +50,11 @@ def test_save_data_to_db():
     assert saved_entry[0] == test_entry_data[0]
     cursor.execute('''SELECT COUNT(*) FROM entries WHERE entry_id = 15;''')
     assert cursor.fetchone()[0] == 1
-    cursor.execute('''SELECT first_name FROM entries;''')
-    assert cursor.fetchall()[0][0] == 'Chip'
+    cursor.execute('''SELECT first_name, last_name, organization_name FROM entries;''')
+    entry_record = cursor.fetchall()[0]
+    assert entry_record[0] == 'Chip'
+    assert entry_record[1] == 'Skylark'
+    assert entry_record[2] == 'Nickelodeon'
     close_db(connection, cursor)
 
 
